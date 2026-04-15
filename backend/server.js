@@ -42,29 +42,6 @@ app.get('/test-db', async (req, res) => {
 });
 
 
-// 🔥 FIX DB (CREAR TABLA BIEN)
-app.get('/fix-db', async (req, res) => {
-    try {
-        await db.execute(`DROP TABLE IF EXISTS usuarios`);
-
-        await db.execute(`
-            CREATE TABLE usuarios (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                password VARCHAR(255) NOT NULL,
-                pregunta VARCHAR(255) NOT NULL,
-                respuesta VARCHAR(255) NOT NULL
-            )
-        `);
-
-        res.send('Tabla creada correctamente ✅');
-
-    } catch (err) {
-        console.error("🔥 ERROR FIX-DB:", err);
-        res.status(500).send(err.message);
-    }
-});
-
-
 // 🔐 REGISTRO
 app.post('/register', async (req, res) => {
     try {
