@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 console.log("🔥 ESTE ES MI SERVER CORRECTO");
+
 const mysql = require('mysql2');
 const express = require('express');
 const cors = require('cors');
@@ -11,36 +12,33 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔗 Conexión a MySQL
+// 🔗 CONEXIÓN MYSQL (POOL + PROMISE)
 const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     port: process.env.DB_PORT,
-    ssl: "Amazon RDS", // 🔥 ESTA ES LA CLAVE
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
-});
-
+}).promise();
 
 // 🧪 Ruta de prueba
 app.get('/', (req, res) => {
     res.send('Servidor funcionando 🚀');
 });
 
-// 🔐 REGISTRO DE USUARIO
+
+// 🔐 REGISTRO
 app.post('/register', async (req, res) => {
     try {
         const { password, pregunta, respuesta } = req.body;
 
-        // Validación básica
         if (!password || !pregunta || !respuesta) {
             return res.status(400).send('Todos los campos son obligatorios');
         }
 
-        // Encriptar contraseña
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const query = `
@@ -48,32 +46,23 @@ app.post('/register', async (req, res) => {
             VALUES (?, ?, ?)
         `;
 
-        db.query(query, [hashedPassword, pregunta, respuesta], (err, result) => {
-            if (err) {
-                console.error("🔥 ERROR SQL COMPLETO:", err);
-                return res.status(500).send(err.message);
-            }
+        await db.execute(query, [hashedPassword, pregunta, respuesta]);
 
-            res.send('Usuario registrado correctamente ✅');
-        });
+        res.send('Usuario registrado correctamente ✅');
 
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error en el servidor');
+    } catch (err) {
+        console.error("🔥 ERROR REGISTER:", err);
+        res.status(500).send(err.message);
     }
 });
 
+
 // 🔐 LOGIN
 app.post('/login', async (req, res) => {
-    const { password } = req.body;
+    try {
+        const { password } = req.body;
 
-    const query = 'SELECT * FROM usuarios LIMIT 1';
-
-    db.query(query, async (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send('Error en servidor');
-        }
+        const [results] = await db.execute('SELECT * FROM usuarios LIMIT 1');
 
         if (results.length === 0) {
             return res.status(404).send('No hay usuario registrado');
@@ -88,32 +77,37 @@ app.post('/login', async (req, res) => {
         }
 
         res.send('Login exitoso ✅');
-    });
+
+    } catch (err) {
+        console.error("🔥 ERROR LOGIN:", err);
+        res.status(500).send(err.message);
+    }
 });
 
-// 📌 OBTENER PREGUNTA DE SEGURIDAD
-app.get('/pregunta', (req, res) => {
-    const query = 'SELECT pregunta FROM usuarios LIMIT 1';
 
-    db.query(query, (err, results) => {
-        if (err) return res.status(500).send('Error');
+// 📌 PREGUNTA
+app.get('/pregunta', async (req, res) => {
+    try {
+        const [results] = await db.execute('SELECT pregunta FROM usuarios LIMIT 1');
 
         if (results.length === 0) {
             return res.status(404).send('No hay usuario');
         }
 
         res.json({ pregunta: results[0].pregunta });
-    });
+
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
 });
 
-// 🔎 VERIFICAR RESPUESTA DE SEGURIDAD
-app.post('/verificar-respuesta', (req, res) => {
-    const { respuesta } = req.body;
 
-    const query = 'SELECT * FROM usuarios LIMIT 1';
+// 🔎 VERIFICAR RESPUESTA
+app.post('/verificar-respuesta', async (req, res) => {
+    try {
+        const { respuesta } = req.body;
 
-    db.query(query, (err, results) => {
-        if (err) return res.status(500).send('Error');
+        const [results] = await db.execute('SELECT * FROM usuarios LIMIT 1');
 
         const user = results[0];
 
@@ -122,37 +116,46 @@ app.post('/verificar-respuesta', (req, res) => {
         }
 
         res.send('Respuesta correcta');
-    });
+
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
 });
 
-// 🔄 ACTUALIZAR CONTRASEÑA
+
+// 🔄 RESET PASSWORD
 app.post('/reset-password', async (req, res) => {
-    const { nuevaPassword } = req.body;
+    try {
+        const { nuevaPassword } = req.body;
 
-    const hashedPassword = await bcrypt.hash(nuevaPassword, 10);
+        const hashedPassword = await bcrypt.hash(nuevaPassword, 10);
 
-    const query = 'UPDATE usuarios SET password = ? LIMIT 1';
-
-    db.query(query, [hashedPassword], (err) => {
-        if (err) return res.status(500).send('Error al actualizar');
+        await db.execute('UPDATE usuarios SET password = ? LIMIT 1', [hashedPassword]);
 
         res.send('Contraseña actualizada ✅');
-    });
+
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
 });
 
-// 🚀 Iniciar servidor
+
+// 🔎 EXISTE USUARIO
+app.get('/existe-usuario', async (req, res) => {
+    try {
+        const [results] = await db.execute('SELECT * FROM usuarios LIMIT 1');
+
+        res.json({ existe: results.length > 0 });
+
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+
+// 🚀 SERVIDOR
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en puerto ${PORT}`);
 });
-
-// 🔎 VERIFICAR SI YA EXISTE USUARIO
-app.get('/existe-usuario', (req, res) => {
-    db.query('SELECT * FROM usuarios LIMIT 1', (err, results) => {
-        if (err) return res.status(500).send('Error');
-
-        res.json({ existe: results.length > 0 });
-    });
-});
-
