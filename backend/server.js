@@ -26,13 +26,6 @@ const db = mysql.createPool({
     queueLimit: 0
 });
 
-db.connect(err => {
-    if (err) {
-        console.error('Error conexión BD:', err);
-    } else {
-        console.log('Conectado a MySQL 🚀');
-    }
-});
 
 // 🧪 Ruta de prueba
 app.get('/', (req, res) => {
