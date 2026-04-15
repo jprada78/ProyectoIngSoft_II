@@ -33,7 +33,14 @@ document.getElementById("btnGuardar").addEventListener("click", async () => {
         });
 
         const data = await res.text();
-        
+
+        console.log("RESPUESTA BACKEND:", data);
+
+        if (!res.ok) {
+            alert("Error: " + data);
+            return;
+        }
+
         const link = document.getElementById("link-registrar");
 
         link.textContent = "¿Olvidó contraseña?";
@@ -135,7 +142,7 @@ document.getElementById("btnNuevaPassword").addEventListener("click", async () =
     if (res.ok) {
         showScreen("registro-exitoso");
         setTimeout(() => {
-        showScreen("login-inicial");
+            showScreen("login-inicial");
         }, 2000);
     }
 });

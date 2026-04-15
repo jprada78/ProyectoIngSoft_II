@@ -56,8 +56,8 @@ app.post('/register', async (req, res) => {
 
         db.query(query, [hashedPassword, pregunta, respuesta], (err, result) => {
             if (err) {
-                console.error(err);
-                return res.status(500).send('Error al registrar');
+                console.error("🔥 ERROR SQL COMPLETO:", err);
+                return res.status(500).send(err.message);
             }
 
             res.send('Usuario registrado correctamente ✅');
