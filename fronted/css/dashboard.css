@@ -1,5 +1,6 @@
 body {
     margin: 0;
+    display: flex;
     font-family: Arial;
     background: #f5f7fa;
 }
@@ -10,11 +11,12 @@ body {
 
 /* SIDEBAR */
 .sidebar {
-    width: 250px;
-    background: #243a5e;
+    width: 220px;
+    background: #1E3A5F;
     color: white;
-    height: 100vh;
+    min-height: 100vh;
     padding: 20px;
+    position: fixed;
 }
 
 .logo {
@@ -52,7 +54,8 @@ nav a:hover {
 /* MAIN */
 .main {
     flex: 1;
-    padding: 30px;
+    padding: 20px;
+    margin-left: 220px; /* Para dejar espacio al sidebar */
 }
 
 .alert {
@@ -109,4 +112,8 @@ nav a:hover {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.sidebar i {
+    margin-right: 10px;
 }
