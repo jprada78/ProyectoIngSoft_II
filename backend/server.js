@@ -159,3 +159,24 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en puerto ${PORT}`);
 });
+
+app.get('/fix-db', async (req, res) => {
+    try {
+        await db.execute(`DROP TABLE IF EXISTS usuarios`);
+
+        await db.execute(`
+            CREATE TABLE usuarios (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                password VARCHAR(255) NOT NULL,
+                pregunta VARCHAR(255) NOT NULL,
+                respuesta VARCHAR(255) NOT NULL
+            )
+        `);
+
+        res.send('Tabla creada correctamente ✅');
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send(err.message);
+    }
+});
