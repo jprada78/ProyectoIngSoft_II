@@ -1,0 +1,126 @@
+/* botones, inputs, cards. */
+
+.card {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    margin-top: 2rem;
+    text-align: left;
+    width: 100%;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border-light);
+    margin-bottom: 1rem;
+}
+
+.btn-primary {
+    width: 100%;
+    background-color: var(--primary-dark);
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background-color: #e5e7eb;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-google {
+    width: 100%;
+    background-color: white;
+    border: 1px solid var(--border-light);
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 5rem;
+}
+
+/* ============================= */
+/* BOTONES GRANDES */
+/* ============================= */
+.btn-large {
+    font-size: 1.2rem;
+    padding: 16px;
+}
+
+/* ============================= */
+/* INPUT GRANDE */
+/* ============================= */
+.input-large {
+    font-size: 1.2rem;
+    padding: 16px;
+    margin-top: 8px;
+    margin-bottom: 1.5rem;
+}
+
+/* ============================= */
+/* LABEL A LA IZQUIERDA */
+/* ============================= */
+.label-left {
+    display: block;
+    text-align: left;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+/* ============================= */
+/* LINK CENTRADO */
+/* ============================= */
+.link-centered {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+    color: var(--primary-blue);
+    font-weight: 500;
+}
+
+/* ============================= */
+/* HEADER DE CARD */
+/* ============================= */
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+
+/* ============================= */
+/* ICONO AZUL CLARO */
+/* ============================= */
+.icon-light {
+    width: 42px;
+    height: 42px;
+    background-color: #dbeafe; /* azul claro */
+    color: var(--primary-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 1.2rem;
+}
+
+/* ============================= */
+/* BOTON GOOGLE FLEX */
+/* ============================= */
+.google-flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.google-icon {
+    width: 45px;
+    height: 45px;
+}
+

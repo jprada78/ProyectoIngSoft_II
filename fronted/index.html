@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Papelería SmartControl</title>
+
+    <!-- Estilos base -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+    <!-- ============================= -->
+    <!-- CONTENEDOR PRINCIPAL APP -->
+    <!-- ============================= -->
+    <section id="login-inicial" class="screen active">
+
+    <!-- LOGO PRINCIPAL -->
+    <div class="logo-container">
+        <div class="logo-box">
+            <img src="assets/icons/logo.png" alt="Logo SmartControl">
+        </div>
+
+        <h1>Papelería SmartControl</h1>
+        <p class="subtitle">Sistema de administración inteligente</p>
+    </div>
+
+    <!-- CARD LOGIN -->
+    <div class="card">
+
+        <!-- ICONO CANDADO + TITULO -->
+        <div class="card-header">
+            <div class="icon-light">
+                🔒
+            </div>
+            <h2>Ingreso administrador</h2>
+        </div>
+
+        <label class="label-left">Contraseña</label>
+
+        <input id="loginPassword" type="password"
+               class="input-large"
+               placeholder="Ingrese su contraseña">
+
+        <button id="btnLogin" class="btn-primary btn-large">
+            Ingresar
+        </button>
+
+        <a href="#" id="link-registrar" class="link-centered">
+            Registrar contraseña por primera vez
+        </a>
+
+    </div>
+
+    <div class="divider">o</div>
+
+    <!-- BOTON GOOGLE -->
+    <button class="btn-google btn-large google-flex">
+        <img src="assets/icons/google.png" class="google-icon">
+        Iniciar sesión con Google
+    </button>
+
+</section>
+
+
+        <!-- ============================= -->
+        <!-- 2️⃣ REGISTRAR CONTRASEÑA -->
+        <!-- ============================= -->
+        <section id="registro" class="screen">
+
+            <div class="logo-container">
+                <div class="logo-icon"></div>
+                <div class="logo-box">
+                    <img src="assets/icons/candado.png" alt="Logo SmartControl">
+                </div>
+                <h2>Registrar Contraseña</h2>
+                <p class="subtitle">Configure su contraseña de administrador</p>
+            </div>
+
+            <div class="card">
+
+                <label>Nueva contraseña</label>
+                <input id="password" type="password" placeholder="Mínimo 6 caracteres">
+
+                <label>Confirmar contraseña</label>
+                <input id="confirmPassword" type="password" placeholder="Repita la contraseña">
+
+                <label>Pregunta de seguridad</label>
+                <select id="pregunta">
+                    <option value="">Seleccione una pregunta</option>
+                    <option value="mascota">¿Cuál es el nombre de su primera mascota?</option>
+                    <option value="ciudad">¿Cuál es su ciudad de nacimiento?</option>
+                    <option value="comida">¿Cuál es su comida favorita?</option>
+                </select>
+
+                <label>Respuesta de seguridad</label>
+                <input id="respuesta" type="text" placeholder="Su respuesta">
+
+                <div class="button-group">
+                    <button id="btnCancelar" class="btn-secondary">Cancelar</button>
+                    <button id="btnGuardar" class="btn-primary">Guardar contraseña</button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ============================= -->
+        <!-- 3️⃣ REGISTRO EXITOSO -->
+        <!-- ============================= -->
+        <section id="registro-exitoso" class="screen success-screen">
+
+            <div class="success-icon">✔</div>
+            <h2>¡Contraseña registrada!</h2>
+            <p>Ya puede iniciar sesión con su nueva contraseña</p>
+
+        </section>
+
+        <!-- ============================= -->
+        <!-- 4️⃣ RECUPERAR CONTRASEÑA -->
+        <!-- ============================= -->
+        <section id="recuperar" class="screen">
+
+            <div class="logo-container">
+                <div class="logo-icon"></div>
+                <h2>Recuperar Contraseña</h2>
+                <p class="subtitle">Responda la pregunta de seguridad</p>
+            </div>
+
+            <div class="card">
+                <label>Pregunta de seguridad</label>
+                <input id="preguntaRecuperacion" type="text" disabled>
+
+                <label>Su respuesta</label>
+                <input id="respuestaRecuperacion" type="text" placeholder="Ingrese su respuesta">
+
+                <div class="button-group">
+                    <button id="btnCancelarRecuperar" class="btn-secondary">Cancelar</button>
+                    <button id="btnVerificar" class="btn-primary">Verificar</button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================= -->
+        <!-- 5️⃣ NUEVA CONTRASEÑA -->
+        <!-- ============================= -->
+        <section id="nueva-password" class="screen">
+
+            <div class="logo-container">
+                <div class="logo-box">
+                    <img src="assets/icons/candado.png" alt="Logo SmartControl">
+                </div>
+                <h2>Nueva Contraseña</h2>
+                <p class="subtitle">Ingrese su nueva contraseña</p>
+            </div>
+
+            <div class="card">
+
+                <label>Nueva contraseña</label>
+                <input id="nuevaPassword" type="password" placeholder="Mínimo 6 caracteres">
+
+                <label>Confirmar contraseña</label>
+                <input id="confirmarNuevaPassword" type="password" placeholder="Repita la contraseña">
+
+            
+
+                <div class="button-group">
+                    <button id="btnCancelarNueva" class="btn-secondary">Cancelar</button>
+                    <button id="btnNuevaPassword" class="btn-primary">Guardar nueva contraseña</button>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/navigation.js" defer></script>
+    <script src="js/auth.js" defer></script>
+    <script src="js/app.js" defer></script>
+
+</body>
+</html>

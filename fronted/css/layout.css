@@ -1,0 +1,26 @@
+/* ===================================== */
+/* CONTENEDOR PRINCIPAL */
+/* ===================================== */
+
+.app-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;   /* Centra horizontal */
+    align-items: flex-start;       /* Centra vertical */
+    padding-top: 10rem;             /* Espacio lateral para que no se pegue */
+}
+
+/* ===================================== */
+/* PANTALLAS */
+/* ===================================== */
+
+.screen {
+    display: none;
+    width: 100%;
+    max-width: 500px;          /* Ancho fijo elegante tipo Figma */
+    text-align: center;
+}
+
+.screen.active {
+    display: block;
+}

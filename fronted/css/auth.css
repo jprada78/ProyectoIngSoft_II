@@ -1,0 +1,50 @@
+/* estilos específicos para autenticación (login, registro, etc.) */
+
+.logo-container {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.logo-box {
+    width: 80px;
+    height: 80px;
+    background-color: var(--primary-dark);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+.logo-box img {
+    width: 60px;
+}
+
+
+.subtitle {
+    color: #6b7280;
+}
+
+.divider {
+    margin: 1.5rem 0;
+    color: #9ca3af;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+}
+
+.success-screen {
+    text-align: center;
+}
+
+.success-icon {
+    font-size: 60px;
+    color: var(--primary-green);
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 2rem;
+}
