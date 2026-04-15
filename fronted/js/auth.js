@@ -1,3 +1,4 @@
+const API_URL = "https://proyectoingsoft-ii.onrender.com";
 // 🔐 REGISTRO DESDE FRONTEND
 
 document.getElementById("btnGuardar").addEventListener("click", async () => {
@@ -19,7 +20,7 @@ document.getElementById("btnGuardar").addEventListener("click", async () => {
     }
 
     try {
-        const res = await fetch("http://localhost:3000/register", {
+        const res = await fetch(`${API_URL}/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -72,7 +73,7 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
     }
 
     try {
-        const res = await fetch("http://localhost:3000/login", {
+        const res = await fetch(`${API_URL}/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -98,7 +99,7 @@ document.getElementById("btnVerificar").addEventListener("click", async () => {
 
     const respuesta = document.getElementById("respuestaRecuperacion").value;
 
-    const res = await fetch("http://localhost:3000/verificar-respuesta", {
+    const res = await fetch(`${API_URL}/verificar-respuesta`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -123,7 +124,7 @@ document.getElementById("btnNuevaPassword").addEventListener("click", async () =
         return;
     }
 
-    const res = await fetch("http://localhost:3000/reset-password", {
+    const res = await fetch(`${API_URL}/reset-password`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -151,7 +152,7 @@ document.getElementById("btnCancelarNueva").addEventListener("click", () => {
 
 async function cargarPregunta() {
     try {
-        const res = await fetch("http://localhost:3000/pregunta");
+        const res = await fetch(`${API_URL}/pregunta`);
         const data = await res.json();
 
         document.getElementById("preguntaRecuperacion").value = data.pregunta;
@@ -163,7 +164,7 @@ async function cargarPregunta() {
 
 async function verificarUsuario() {
     try {
-        const res = await fetch("http://localhost:3000/existe-usuario");
+        const res = await fetch(`${API_URL}/existe-usuario`);
         const data = await res.json();
 
         const link = document.getElementById("link-registrar");
