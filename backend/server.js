@@ -12,7 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔗 CONEXIÓN MYSQL (POOL + PROMISE)
+// 🔗 CONEXIÓN MYSQL
 const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -21,12 +21,47 @@ const db = mysql.createPool({
     port: process.env.DB_PORT,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
 }).promise();
 
-// 🧪 Ruta de prueba
+
+// 🧪 TEST SERVIDOR
 app.get('/', (req, res) => {
     res.send('Servidor funcionando 🚀');
+});
+
+
+// 🧪 TEST DB
+app.get('/test-db', async (req, res) => {
+    try {
+        await db.execute('SELECT 1');
+        res.send('BD conectada ✅');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error en BD ❌');
+    }
+});
+
+
+// 🔥 FIX DB (CREAR TABLA BIEN)
+app.get('/fix-db', async (req, res) => {
+    try {
+        await db.execute(`DROP TABLE IF EXISTS usuarios`);
+
+        await db.execute(`
+            CREATE TABLE usuarios (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                password VARCHAR(255) NOT NULL,
+                pregunta VARCHAR(255) NOT NULL,
+                respuesta VARCHAR(255) NOT NULL
+            )
+        `);
+
+        res.send('Tabla creada correctamente ✅');
+
+    } catch (err) {
+        console.error("🔥 ERROR FIX-DB:", err);
+        res.status(500).send(err.message);
+    }
 });
 
 
@@ -39,14 +74,18 @@ app.post('/register', async (req, res) => {
             return res.status(400).send('Todos los campos son obligatorios');
         }
 
+        // Verificar si ya existe usuario
+        const [rows] = await db.execute('SELECT * FROM usuarios LIMIT 1');
+        if (rows.length > 0) {
+            return res.status(400).send('Ya existe un usuario registrado');
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const query = `
-            INSERT INTO usuarios (password, pregunta, respuesta)
-            VALUES (?, ?, ?)
-        `;
-
-        await db.execute(query, [hashedPassword, pregunta, respuesta]);
+        await db.execute(
+            `INSERT INTO usuarios (password, pregunta, respuesta) VALUES (?, ?, ?)`,
+            [hashedPassword, pregunta, respuesta]
+        );
 
         res.send('Usuario registrado correctamente ✅');
 
@@ -61,6 +100,10 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
     try {
         const { password } = req.body;
+
+        if (!password) {
+            return res.status(400).send('Ingrese la contraseña');
+        }
 
         const [results] = await db.execute('SELECT * FROM usuarios LIMIT 1');
 
@@ -97,6 +140,7 @@ app.get('/pregunta', async (req, res) => {
         res.json({ pregunta: results[0].pregunta });
 
     } catch (err) {
+        console.error(err);
         res.status(500).send(err.message);
     }
 });
@@ -109,6 +153,10 @@ app.post('/verificar-respuesta', async (req, res) => {
 
         const [results] = await db.execute('SELECT * FROM usuarios LIMIT 1');
 
+        if (results.length === 0) {
+            return res.status(404).send('No hay usuario');
+        }
+
         const user = results[0];
 
         if (user.respuesta.trim().toLowerCase() !== respuesta.trim().toLowerCase()) {
@@ -118,6 +166,7 @@ app.post('/verificar-respuesta', async (req, res) => {
         res.send('Respuesta correcta');
 
     } catch (err) {
+        console.error(err);
         res.status(500).send(err.message);
     }
 });
@@ -128,13 +177,21 @@ app.post('/reset-password', async (req, res) => {
     try {
         const { nuevaPassword } = req.body;
 
+        if (!nuevaPassword) {
+            return res.status(400).send('Ingrese la nueva contraseña');
+        }
+
         const hashedPassword = await bcrypt.hash(nuevaPassword, 10);
 
-        await db.execute('UPDATE usuarios SET password = ? LIMIT 1', [hashedPassword]);
+        await db.execute(
+            'UPDATE usuarios SET password = ? LIMIT 1',
+            [hashedPassword]
+        );
 
         res.send('Contraseña actualizada ✅');
 
     } catch (err) {
+        console.error(err);
         res.status(500).send(err.message);
     }
 });
@@ -148,6 +205,7 @@ app.get('/existe-usuario', async (req, res) => {
         res.json({ existe: results.length > 0 });
 
     } catch (err) {
+        console.error(err);
         res.status(500).send(err.message);
     }
 });
@@ -158,25 +216,4 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en puerto ${PORT}`);
-});
-
-app.get('/fix-db', async (req, res) => {
-    try {
-        await db.execute(`DROP TABLE IF EXISTS usuarios`);
-
-        await db.execute(`
-            CREATE TABLE usuarios (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                password VARCHAR(255) NOT NULL,
-                pregunta VARCHAR(255) NOT NULL,
-                respuesta VARCHAR(255) NOT NULL
-            )
-        `);
-
-        res.send('Tabla creada correctamente ✅');
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).send(err.message);
-    }
 });
