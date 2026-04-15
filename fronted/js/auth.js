@@ -92,6 +92,10 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
 
         if (res.ok) {
             alert("✅ Bienvenido");
+
+            // 🚀 REDIRECCIÓN AL DASHBOARD
+            window.location.href = "dashboard.html";
+
         } else {
             alert(data);
         }

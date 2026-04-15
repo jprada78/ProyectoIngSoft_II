@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - SmartControl</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo">
+            <img src="assets/logo.png" alt="logo">
+            <h2>SmartControl</h2>
+        </div>
+
+        <nav>
+            <a class="active"><img src="assets/dashboard.png"> Dashboard</a>
+            <a><img src="assets/ventas.png"> Registrar Venta</a>
+            <a><img src="assets/gastos.png"> Registrar Gasto</a>
+            <a><img src="assets/inventario.png"> Inventario</a>
+            <a><img src="assets/corresponsal.png"> Corresponsal</a>
+            <a><img src="assets/accesos.png"> Accesos Directos</a>
+            <a><img src="assets/notificaciones.png"> Notificaciones</a>
+        </nav>
+
+        <button class="logout">
+            <img src="assets/logout.png"> Cerrar Sesión
+        </button>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <h1>Dashboard</h1>
+
+        <!-- ALERTA -->
+        <div class="alert">
+            <img src="assets/alerta.png">
+            <div>
+                <strong>Stock bajo o crítico en 1 producto</strong>
+                <p>Regla (1)</p>
+            </div>
+        </div>
+
+        <!-- CARDS -->
+        <div class="cards">
+
+            <div class="card">
+                <h3>Ventas del día</h3>
+                <p class="blue">$ 2.400</p>
+            </div>
+
+            <div class="card">
+                <h3>Gastos del día</h3>
+                <p class="red">$ 0</p>
+            </div>
+
+            <div class="card">
+                <h3>Ganancia neta</h3>
+                <p class="green">$ 2.400</p>
+            </div>
+
+            <div class="card">
+                <h3>Total del mes</h3>
+                <p>$ 2.400</p>
+            </div>
+
+        </div>
+
+        <!-- TOP PRODUCTOS -->
+        <div class="box">
+            <h2>Top 5 Productos Más Vendidos</h2>
+            <div class="top-item">
+                <span class="rank">1</span>
+                <div>
+                    <strong>Regla</strong>
+                    <p>3 unidades vendidas</p>
+                </div>
+                <span class="price">$ 2.400</span>
+            </div>
+        </div>
+
+        <!-- GRÁFICA -->
+        <div class="box">
+            <h2>Ventas por Tipo (Este Mes)</h2>
+            <div class="chart-placeholder">
+                (Aquí irá gráfica después 📊)
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script src="js/dashboard.js"></script>
+</body>
+</html>
