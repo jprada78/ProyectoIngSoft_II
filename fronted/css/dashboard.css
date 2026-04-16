@@ -9,7 +9,7 @@
     --radius: 12px;
 
     /* Cambia aqui los tamanos de iconos */
-    --brand-icon-size: 42px;
+    --brand-icon-size: 50px;
     --sidebar-icon-size: 24px;
     --logout-icon-size: 32px;
     --alert-icon-size: 22px;
@@ -292,7 +292,7 @@ h1 {
 }
 
 .top-products {
-    grid-column: 1 / 6;
+    grid-column: 1 / -1;
     padding: 18px 16px;
 }
 
@@ -376,7 +376,7 @@ h1 {
 }
 
 .chart-panel {
-    grid-column: 6 / -1;
+    grid-column: 1 / -1;
     padding: 18px 21px 16px;
 }
 
