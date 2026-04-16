@@ -1,0 +1,370 @@
+:root {
+    --sidebar-width: 300px;
+    --sidebar-bg: #1E3A5F;
+    --page-bg: #F0F5FA;
+    --text-main: #1E3A5F;
+    --text-dark: #202124;
+    --card-bg: #ffffff;
+    --border: #d7d7d7;
+    --shadow: 0 3px 4px rgba(38, 58, 89, 0.26);
+    --radius: 12px;
+
+    /* Cambia aqui los tamanos de iconos */
+    --brand-icon-size: 50px;
+    --sidebar-icon-size: 30px;
+    --logout-icon-size: 32px;
+    --form-title-icon-size: 31px;
+    --field-icon-size: 25px;
+    --save-icon-size: 25px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--page-bg);
+    color: var(--text-main);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.sales-shell {
+    min-height: 100vh;
+    display: flex;
+    background: var(--page-bg);
+}
+
+.sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: var(--sidebar-width);
+    background: var(--sidebar-bg);
+    color: #f5f8fc;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 30px 20px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 20px 60px;
+}
+
+.brand__icon {
+    width: var(--brand-icon-size);
+    height: var(--brand-icon-size);
+    object-fit: contain;
+}
+
+.brand__name {
+    color: #ffffff;
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: 0;
+}
+
+.sidebar__nav {
+    display: grid;
+    gap: 18px;
+}
+
+.nav-item {
+    min-height: 31px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 30px;
+    border-radius: var(--radius);
+    color: #eaf0f8;
+    font-size: 18px;
+    font-weight: 700;
+    text-decoration: none;
+    line-height: 1.1;
+}
+
+.nav-item:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.09);
+}
+
+.nav-item--active {
+    background: #ffffff;
+    color: var(--text-main);
+}
+
+.nav-item--active:hover {
+  color: var(--text-main);
+  background: #ffffff;
+}
+
+.nav-item__icon {
+    width: var(--sidebar-icon-size);
+    height: var(--sidebar-icon-size);
+    object-fit: contain;
+    flex: 0 0 auto;
+}
+
+.logout-button {
+    width: 100%;
+    min-height: 55px;
+    margin-top: auto;
+    border: 1px solid rgba(255, 255, 255, 0.68);
+    border-radius: var(--radius);
+    background: transparent;
+    color: #f7fbff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 11px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.logout-button:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.logout-button__icon {
+    width: var(--logout-icon-size);
+    height: var(--logout-icon-size);
+    object-fit: contain;
+}
+
+.sales-content {
+    width: 100%;
+    min-height: 100vh;
+    margin-left: var(--sidebar-width);
+}
+
+.sales-inner {
+    width: 100%;
+    max-width: 1170px;
+    min-height: 100vh;    
+    margin: 0 auto;
+    padding: 35px 40px 100px;
+}
+
+h1 {
+    margin: 0 0 30px;
+    color: var(--text-main);
+    font-size: 35px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.sale-card {
+    width: 100%;
+    min-height: 614px;
+    padding: 30px 28px 36px;
+    border-radius: var(--radius);
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+}
+
+.sale-card__title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    color: var(--text-dark);
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.sale-card__title-icon {
+    width: var(--form-title-icon-size);
+    height: var(--form-title-icon-size);
+    object-fit: contain;
+}
+
+.field,
+.field-group {
+    display: block;
+    margin-bottom: 25px;
+}
+
+.field-group span {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+    font-size: 19px;
+    font-weight: 600;
+}
+
+.field input,
+.field-group input,
+.field-group select {
+    width: 100%;
+    height: 43px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: #ffffff;
+    color: #30323a;
+    font-size: 17px;
+    outline: none;
+}
+
+.field input::placeholder,
+.field-group input::placeholder {
+    color: #9f9f9f;
+}
+
+.field input:focus,
+.field-group input:focus,
+.field-group select:focus {
+    border-color: #2f62e8;
+    box-shadow: 0 0 0 3px rgba(47, 98, 232, 0.14);
+}
+
+.field--with-icon {
+    position: relative;
+}
+
+.field--with-icon input {
+    padding: 0 16px 0 46px;
+}
+
+.field__icon {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    width: var(--field-icon-size);
+    height: var(--field-icon-size);
+    object-fit: contain;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.field-group input {
+    padding: 0 22px;
+}
+
+.field-group select {
+    appearance: none;
+    padding: 0 52px 0 22px;
+    background-image:
+        linear-gradient(45deg, transparent 50%, #151515 50%),
+        linear-gradient(135deg, #151515 50%, transparent 50%);
+    background-position:
+        calc(100% - 27px) 18px,
+        calc(100% - 19px) 18px;
+    background-size: 8px 8px, 8px 8px;
+    background-repeat: no-repeat;
+    color: #555;
+}
+
+.form-message {
+    min-height: 18px;
+    margin: -8px 0 8px;
+    color: #0f9f6e;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.form-message--error {
+    color: #e04444;
+}
+
+.save-button {
+    width: 100%;
+    height: 50px;
+    border: 0;
+    border-radius: var(--radius);
+    background: #2563EB;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.save-button:hover {
+    background: #2563EB;
+}
+
+.save-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.72;
+}
+
+.save-button__icon {
+    width: var(--save-icon-size);
+    height: var(--save-icon-size);
+    object-fit: contain;
+}
+
+.js-icon[src=""],
+.js-icon:not([src]) {
+    visibility: hidden;
+}
+
+@media (min-width: 1200px) {
+    .sales-inner {
+        margin-left: 20px;
+    }
+}
+
+@media (max-width: 900px) {
+    .sales-shell {
+        display: block;
+    }
+
+    .sidebar {
+        position: static;
+        width: 100%;
+        min-height: auto;
+        padding: 20px 16px;
+    }
+
+    .brand {
+        margin-bottom: 22px;
+    }
+
+    .sidebar__nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .nav-item {
+        padding-inline: 18px;
+    }
+
+    .logout-button {
+        margin-top: 18px;
+    }
+
+    .sales-content {
+        margin-left: 0;
+    }
+
+    .sales-inner {
+        max-width: none;
+        margin: 0;
+        padding: 28px 16px;
+    }
+}
+
+@media (max-width: 520px) {
+    .sidebar__nav {
+        grid-template-columns: 1fr;
+    }
+
+    h1 {
+        font-size: 31px;
+    }
+
+    .sale-card {
+        padding: 24px 18px 28px;
+    }
+}
