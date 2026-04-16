@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-console.log("🔥 ESTE ES MI SERVER CORRECTO");
+console.log("ESTE ES MI SERVER CORRECTO");
 
 const mysql = require('mysql2');
 const express = require('express');
@@ -12,7 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔗 CONEXIÓN MYSQL
+// CONEXIÓN MYSQL
 const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -24,13 +24,13 @@ const db = mysql.createPool({
 }).promise();
 
 
-// 🧪 TEST SERVIDOR
+// TEST SERVIDOR
 app.get('/', (req, res) => {
     res.send('Servidor funcionando 🚀');
 });
 
 
-// 🧪 TEST DB
+// TEST DB
 app.get('/test-db', async (req, res) => {
     try {
         await db.execute('SELECT 1');
@@ -42,7 +42,7 @@ app.get('/test-db', async (req, res) => {
 });
 
 
-// 🔐 REGISTRO
+// REGISTRO
 app.post('/register', async (req, res) => {
     try {
         const { password, pregunta, respuesta } = req.body;
@@ -73,7 +73,7 @@ app.post('/register', async (req, res) => {
 });
 
 
-// 🔐 LOGIN
+// LOGIN
 app.post('/login', async (req, res) => {
     try {
         const { password } = req.body;
@@ -99,13 +99,13 @@ app.post('/login', async (req, res) => {
         res.send('Login exitoso ✅');
 
     } catch (err) {
-        console.error("🔥 ERROR LOGIN:", err);
+        console.error("ERROR LOGIN:", err);
         res.status(500).send(err.message);
     }
 });
 
 
-// 📌 PREGUNTA
+// PREGUNTA
 app.get('/pregunta', async (req, res) => {
     try {
         const [results] = await db.execute('SELECT pregunta FROM usuarios LIMIT 1');
@@ -123,7 +123,7 @@ app.get('/pregunta', async (req, res) => {
 });
 
 
-// 🔎 VERIFICAR RESPUESTA
+// VERIFICAR RESPUESTA
 app.post('/verificar-respuesta', async (req, res) => {
     try {
         const { respuesta } = req.body;
@@ -149,7 +149,7 @@ app.post('/verificar-respuesta', async (req, res) => {
 });
 
 
-// 🔄 RESET PASSWORD
+// RESET PASSWORD
 app.post('/reset-password', async (req, res) => {
     try {
         const { nuevaPassword } = req.body;
@@ -174,7 +174,7 @@ app.post('/reset-password', async (req, res) => {
 });
 
 
-// 🔎 EXISTE USUARIO
+// EXISTE USUARIO
 app.get('/existe-usuario', async (req, res) => {
     try {
         const [results] = await db.execute('SELECT * FROM usuarios LIMIT 1');
@@ -188,7 +188,7 @@ app.get('/existe-usuario', async (req, res) => {
 });
 
 
-// 🚀 SERVIDOR
+// SERVIDOR
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

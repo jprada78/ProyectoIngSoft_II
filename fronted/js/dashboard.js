@@ -1,7 +1,6 @@
 const DASHBOARD_CONFIG = {
     iconBasePath: "./icons/",
 
-    // Cambia aqui los nombres de archivo por los iconos que tienes.
     icons: {
         logo: "logo.png",
         dashboard: "dashboard1.png",
@@ -21,7 +20,7 @@ const DASHBOARD_CONFIG = {
         trend: "flecha.png",
     },
 
-    // Cuando tengas Express + MySQL, este endpoint puede devolver el mismo formato.
+    // Este endpoint puede devolver el mismo formato.
     apiUrl: "/api/dashboard/summary",
 };
 

@@ -1,5 +1,5 @@
 const API_URL = "https://proyectoingsoft-ii.onrender.com";
-// 🔐 REGISTRO DESDE FRONTEND
+// REGISTRO DESDE FRONTEND
 
 document.getElementById("btnGuardar").addEventListener("click", async () => {
 
@@ -68,7 +68,7 @@ document.getElementById("btnCancelar").addEventListener("click", () => {
     showScreen("login-inicial");
 });
 
-// 🔐 LOGIN
+// LOGIN
 
 document.getElementById("btnLogin").addEventListener("click", async () => {
 
@@ -93,7 +93,7 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
         if (res.ok) {
             alert("✅ Bienvenido");
 
-            // 🚀 REDIRECCIÓN AL DASHBOARD
+            // REDIRECCIÓN AL DASHBOARD
             window.location.href = "dashboard.html";
 
         } else {

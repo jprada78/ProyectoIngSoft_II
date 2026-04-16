@@ -17,7 +17,7 @@
 .screen {
     display: none;
     width: 100%;
-    max-width: 500px;          /* Ancho fijo elegante tipo Figma */
+    max-width: 500px;          /* Ancho fijo */
     text-align: center;
 }
 
