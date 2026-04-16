@@ -9,13 +9,13 @@ const SALE_CONFIG = {
     dashboard: "dashboard2.png",
     sale: "carrito1.png",
     expense: "factura2.png",
-    inventory: "inventario2.png",
+    inventory: "Inventario2.png",
     corresponsal: "corresponsal2.png",
     shortcuts: "acceso-directo2.png",
     notifications: "notificacion2.png",
     logout: "cerrar-sesion.png",
     search: "lupa.png",
-    save: "guardar.png",
+    save: "Guardar.png",
   },
 
   // Cuando tengas Node + Express + MySQL, crea este endpoint para guardar ventas.
