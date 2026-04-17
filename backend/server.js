@@ -242,7 +242,14 @@ function getDashboardRanges() {
 // REGISTRAR VENTA
 app.post('/api/sales', async (req, res) => {
     try {
-        const { product, saleType, description, amount, paymentMethod } = req.body;
+        const {
+            product,
+            saleType,
+            description,
+            quantity,
+            amount,
+            paymentMethod
+        } = req.body;
 
         if (!saleType || !description || !amount || !paymentMethod) {
             return res.status(400).json({
@@ -251,6 +258,10 @@ app.post('/api/sales', async (req, res) => {
         }
 
         const numericAmount = Number(amount);
+        const numericQuantity =
+            quantity === null || quantity === undefined || quantity === ''
+                ? null
+                : Number(quantity);
 
         if (Number.isNaN(numericAmount) || numericAmount <= 0) {
             return res.status(400).json({
@@ -258,16 +269,26 @@ app.post('/api/sales', async (req, res) => {
             });
         }
 
+        if (
+            numericQuantity !== null &&
+            (!Number.isInteger(numericQuantity) || numericQuantity <= 0)
+        ) {
+            return res.status(400).json({
+                message: 'La cantidad debe ser un número entero mayor a 0',
+            });
+        }
+
         const createdAt = getBogotaDateTime();
 
         const [result] = await db.execute(
             `INSERT INTO ventas 
-             (producto, tipo_venta, descripcion, monto, medio_pago, created_at)
-             VALUES (?, ?, ?, ?, ?, ?)`,
+             (producto, tipo_venta, descripcion, cantidad, monto, medio_pago, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [
                 product || null,
                 saleType,
                 description,
+                numericQuantity,
                 numericAmount,
                 paymentMethod,
                 createdAt,
@@ -308,13 +329,13 @@ app.get('/api/dashboard/summary', async (req, res) => {
         const [topProductsRows] = await db.execute(
             `SELECT 
                 COALESCE(NULLIF(producto, ''), descripcion) AS name,
-                COUNT(*) AS units,
+                COALESCE(SUM(COALESCE(cantidad, 1)), 0) AS units,
                 COALESCE(SUM(monto), 0) AS income
-             FROM ventas
-             WHERE created_at >= ? AND created_at < ?
-             GROUP BY COALESCE(NULLIF(producto, ''), descripcion)
-             ORDER BY income DESC
-             LIMIT 5`,
+            FROM ventas
+            WHERE created_at >= ? AND created_at < ?
+            GROUP BY COALESCE(NULLIF(producto, ''), descripcion)
+            ORDER BY income DESC
+            LIMIT 5`,
             [monthStart, nextMonthStart]
         );
 

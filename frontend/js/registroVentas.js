@@ -81,20 +81,34 @@ function setupSaleForm() {
 
 function getSaleData(form) {
   const formData = new FormData(form);
+  const quantityValue = String(formData.get("quantity") || "").trim();
 
   return {
     product: String(formData.get("product") || "").trim(),
     saleType: String(formData.get("saleType") || "").trim(),
     description: String(formData.get("description") || "").trim(),
+    quantity: quantityValue ? Number(quantityValue) : null,
     amount: Number(formData.get("amount") || 0),
     paymentMethod: String(formData.get("paymentMethod") || "").trim(),
     createdAt: new Date().toISOString(),
   };
 }
 
+
 function isValidSale(sale) {
-  return sale.saleType && sale.description && sale.amount > 0 && sale.paymentMethod;
+  const hasValidRequiredFields =
+    sale.saleType &&
+    sale.description &&
+    sale.amount > 0 &&
+    sale.paymentMethod;
+
+  const hasValidQuantity =
+    sale.quantity === null ||
+    (Number.isInteger(sale.quantity) && sale.quantity > 0);
+
+  return hasValidRequiredFields && hasValidQuantity;
 }
+
 
 async function saveSale(sale) {
   const response = await fetch(SALE_CONFIG.apiUrl, {
