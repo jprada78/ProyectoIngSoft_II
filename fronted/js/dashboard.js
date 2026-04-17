@@ -6,7 +6,7 @@ const DASHBOARD_CONFIG = {
         dashboard: "dashboard1.png",
         sale: "carrito2.png",
         expense: "factura2.png",
-        inventory: "inventario2.png",
+        inventory: "Inventario2.png",
         corresponsal: "corresponsal2.png",
         shortcuts: "acceso-directo2.png",
         notifications: "notificacion2.png",

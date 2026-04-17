@@ -187,6 +187,31 @@ app.get('/existe-usuario', async (req, res) => {
     }
 });
 
+app.get('/init-db', async (req, res) => {
+    try {
+        await db.execute(`
+            CREATE TABLE IF NOT EXISTS ventas (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                producto VARCHAR(150) NULL,
+                tipo_venta VARCHAR(80) NOT NULL,
+                descripcion VARCHAR(255) NOT NULL,
+                monto DECIMAL(12,2) NOT NULL DEFAULT 0,
+                medio_pago VARCHAR(80) NOT NULL,
+                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                INDEX idx_ventas_created_at (created_at),
+                INDEX idx_ventas_tipo (tipo_venta),
+                INDEX idx_ventas_producto (producto)
+            )
+        `);
+
+        res.send('Tabla ventas creada correctamente ✅');
+
+    } catch (err) {
+        console.error('ERROR CREANDO TABLA:', err);
+        res.status(500).send(err.message);
+    }
+});
+
 
 // SERVIDOR
 const PORT = process.env.PORT || 3000;
