@@ -1,3 +1,8 @@
+const API_BASE_URL =
+    window.location.port === "5500" || window.location.port === "5501"
+        ? "http://localhost:3000"
+        : "";
+
 const DASHBOARD_CONFIG = {
     iconBasePath: "./icons/",
 
@@ -21,7 +26,8 @@ const DASHBOARD_CONFIG = {
     },
 
     // Este endpoint puede devolver el mismo formato.
-    apiUrl: "/api/dashboard/summary",
+    apiUrl: `${API_BASE_URL}/api/dashboard/summary`,
+
 };
 
 const fallbackData = {
@@ -50,6 +56,7 @@ let currentDashboardData = fallbackData;
 
 document.addEventListener("DOMContentLoaded", async () => {
     applyIcons();
+    setupLogout();
     renderDashboard(fallbackData);
 
     const dashboardData = await loadDashboardData();
@@ -254,3 +261,17 @@ function escapeHtml(value) {
 window.addEventListener("resize", () => {
     drawSalesByTypeChart(currentDashboardData.salesByType);
 });
+
+function setupLogout() {
+    const logoutButton = document.querySelector(".logout-button");
+
+    if (!logoutButton) return;
+
+    logoutButton.addEventListener("click", () => {
+        localStorage.removeItem("smartcontrol_user");
+        localStorage.removeItem("smartcontrol_token");
+        sessionStorage.clear();
+
+        window.location.href = "index.html";
+    });
+}

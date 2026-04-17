@@ -2,6 +2,7 @@ require('dotenv').config();
 
 console.log("ESTE ES MI SERVER CORRECTO");
 
+const path = require('path');
 const mysql = require('mysql2');
 const express = require('express');
 const cors = require('cors');
@@ -11,6 +12,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 // CONEXIÓN MYSQL
 const db = mysql.createPool({
@@ -18,16 +20,17 @@ const db = mysql.createPool({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    port: process.env.DB_PORT,
+    port: Number(process.env.DB_PORT),
     waitForConnections: true,
     connectionLimit: 10,
 }).promise();
 
 
-// TEST SERVIDOR
+// Abrir en Fronted
 app.get('/', (req, res) => {
-    res.send('Servidor funcionando 🚀');
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
+
 
 
 // TEST DB
@@ -187,28 +190,173 @@ app.get('/existe-usuario', async (req, res) => {
     }
 });
 
-app.get('/init-db', async (req, res) => {
-    try {
-        await db.execute(`
-            CREATE TABLE IF NOT EXISTS ventas (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                producto VARCHAR(150) NULL,
-                tipo_venta VARCHAR(80) NOT NULL,
-                descripcion VARCHAR(255) NOT NULL,
-                monto DECIMAL(12,2) NOT NULL DEFAULT 0,
-                medio_pago VARCHAR(80) NOT NULL,
-                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_ventas_created_at (created_at),
-                INDEX idx_ventas_tipo (tipo_venta),
-                INDEX idx_ventas_producto (producto)
-            )
-        `);
+function getBogotaDateTime() {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Bogota',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+    }).formatToParts(new Date());
 
-        res.send('Tabla ventas creada correctamente ✅');
+    const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
+
+    return `${values.year}-${values.month}-${values.day} ${values.hour}:${values.minute}:${values.second}`;
+}
+
+function getBogotaDateParts() {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Bogota',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+    }).formatToParts(new Date());
+
+    const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
+
+    return {
+        year: values.year,
+        month: values.month,
+        day: values.day,
+    };
+}
+
+function getDashboardRanges() {
+    const { year, month, day } = getBogotaDateParts();
+
+    return {
+        todayStart: `${year}-${month}-${day} 00:00:00`,
+        todayEnd: `${year}-${month}-${day} 23:59:59`,
+        monthStart: `${year}-${month}-01 00:00:00`,
+        nextMonthStart:
+            month === '12'
+                ? `${Number(year) + 1}-01-01 00:00:00`
+                : `${year}-${String(Number(month) + 1).padStart(2, '0')}-01 00:00:00`,
+    };
+}
+
+
+// REGISTRAR VENTA
+app.post('/api/sales', async (req, res) => {
+    try {
+        const { product, saleType, description, amount, paymentMethod } = req.body;
+
+        if (!saleType || !description || !amount || !paymentMethod) {
+            return res.status(400).json({
+                message: 'Tipo de venta, descripción, monto y medio de pago son obligatorios',
+            });
+        }
+
+        const numericAmount = Number(amount);
+
+        if (Number.isNaN(numericAmount) || numericAmount <= 0) {
+            return res.status(400).json({
+                message: 'El monto debe ser mayor a 0',
+            });
+        }
+
+        const createdAt = getBogotaDateTime();
+
+        const [result] = await db.execute(
+            `INSERT INTO ventas 
+             (producto, tipo_venta, descripcion, monto, medio_pago, created_at)
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            [
+                product || null,
+                saleType,
+                description,
+                numericAmount,
+                paymentMethod,
+                createdAt,
+            ]
+        );
+
+        res.status(201).json({
+            message: 'Venta registrada correctamente',
+            id: result.insertId,
+        });
 
     } catch (err) {
-        console.error('ERROR CREANDO TABLA:', err);
-        res.status(500).send(err.message);
+        console.error('ERROR REGISTRAR VENTA:', err);
+        res.status(500).json({ message: err.message });
+    }
+});
+
+
+// RESUMEN DASHBOARD
+app.get('/api/dashboard/summary', async (req, res) => {
+    try {
+        const { todayStart, todayEnd, monthStart, nextMonthStart } = getDashboardRanges();
+
+        const [[salesDayRow]] = await db.execute(
+            `SELECT COALESCE(SUM(monto), 0) AS total
+             FROM ventas
+             WHERE created_at BETWEEN ? AND ?`,
+            [todayStart, todayEnd]
+        );
+
+        const [[monthRow]] = await db.execute(
+            `SELECT COALESCE(SUM(monto), 0) AS total
+             FROM ventas
+             WHERE created_at >= ? AND created_at < ?`,
+            [monthStart, nextMonthStart]
+        );
+
+        const [topProductsRows] = await db.execute(
+            `SELECT 
+                COALESCE(NULLIF(producto, ''), descripcion) AS name,
+                COUNT(*) AS units,
+                COALESCE(SUM(monto), 0) AS income
+             FROM ventas
+             WHERE created_at >= ? AND created_at < ?
+             GROUP BY COALESCE(NULLIF(producto, ''), descripcion)
+             ORDER BY income DESC
+             LIMIT 5`,
+            [monthStart, nextMonthStart]
+        );
+
+        const [salesByTypeRows] = await db.execute(
+            `SELECT 
+                tipo_venta AS label,
+                COALESCE(SUM(monto), 0) AS value
+             FROM ventas
+             WHERE created_at >= ? AND created_at < ?
+             GROUP BY tipo_venta
+             ORDER BY value DESC`,
+            [monthStart, nextMonthStart]
+        );
+
+        const salesDay = Number(salesDayRow.total);
+        const monthTotal = Number(monthRow.total);
+
+        res.json({
+            alert: {
+                count: 0,
+                product: '',
+            },
+            cards: {
+                salesDay,
+                expensesDay: 0,
+                netProfit: salesDay,
+                monthTotal,
+            },
+            topProducts: topProductsRows.map(row => ({
+                name: row.name,
+                units: Number(row.units),
+                income: Number(row.income),
+            })),
+            salesByType: salesByTypeRows.map(row => ({
+                label: row.label,
+                value: Number(row.value),
+            })),
+        });
+
+    } catch (err) {
+        console.error('ERROR DASHBOARD SUMMARY:', err);
+        res.status(500).json({ message: err.message });
     }
 });
 

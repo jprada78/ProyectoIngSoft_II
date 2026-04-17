@@ -1,6 +1,9 @@
+const API_BASE_URL =
+  window.location.port === "5500" || window.location.port === "5501"
+    ? "http://localhost:3000"
+    : "";
 const SALE_CONFIG = {
-  // Cambia esta ruta si tu carpeta de iconos esta en otro lugar.
-  // Si registroVentas.html esta en la raiz y los iconos estan en /icons, deja "./icons/".
+
   iconBasePath: "./icons/",
 
   // Cambia aqui los nombres por los archivos reales que tienes.
@@ -19,11 +22,12 @@ const SALE_CONFIG = {
   },
 
   // Cuando tengas Node + Express + MySQL, crea este endpoint para guardar ventas.
-  apiUrl: "/api/sales",
+  apiUrl: `${API_BASE_URL}/api/sales`,
 };
 
 document.addEventListener("DOMContentLoaded", () => {
   applyIcons();
+  setupLogout();
   setupSaleForm();
 });
 
@@ -62,7 +66,11 @@ function setupSaleForm() {
     try {
       await saveSale(sale);
       form.reset();
-      showMessage(message, "Venta guardada correctamente.", false);
+      showSuccessModal();
+
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 1300);
     } catch (error) {
       showMessage(message, "No se pudo guardar la venta. Intenta nuevamente.", true);
     } finally {
@@ -89,40 +97,47 @@ function isValidSale(sale) {
 }
 
 async function saveSale(sale) {
-  try {
-    const response = await fetch(SALE_CONFIG.apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(sale),
-    });
-
-    if (!response.ok) {
-      throw new Error("API unavailable");
-    }
-
-    return await response.json();
-  } catch (error) {
-    saveSaleLocally(sale);
-    return sale;
-  }
-}
-
-function saveSaleLocally(sale) {
-  const storageKey = "smartcontrol_sales";
-  const currentSales = JSON.parse(localStorage.getItem(storageKey) || "[]");
-
-  currentSales.push({
-    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-    ...sale,
+  const response = await fetch(SALE_CONFIG.apiUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(sale),
   });
 
-  localStorage.setItem(storageKey, JSON.stringify(currentSales));
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "No se pudo guardar la venta");
+  }
+
+  return data;
 }
 
 function showMessage(messageElement, text, isError) {
   messageElement.textContent = text;
   messageElement.classList.toggle("form-message--error", isError);
+}
+
+function setupLogout() {
+  const logoutButton = document.querySelector(".logout-button");
+
+  if (!logoutButton) return;
+
+  logoutButton.addEventListener("click", () => {
+    localStorage.removeItem("smartcontrol_user");
+    localStorage.removeItem("smartcontrol_token");
+    sessionStorage.clear();
+
+    window.location.href = "index.html";
+  });
+}
+
+function showSuccessModal() {
+  const modal = document.getElementById("success-modal");
+
+  if (!modal) return;
+
+  modal.hidden = false;
 }
