@@ -1,0 +1,47 @@
+/* ====== AJUSTES ESPECÍFICOS PARA GASTOS ====== */
+
+/* Cambiar color del botón SOLO en gastos */
+.save-button--gasto {
+    background: #10B981; /* verde */
+}
+
+.save-button--gasto:hover {
+    background: #0ea371;
+}
+
+/* Ajuste del card para que no quede tan alto */
+.sale-card {
+    min-height: auto;
+}
+
+/* Inputs más suaves (como tu mockup) */
+.field-group input,
+.field-group select {
+    background: #f7f7f7;
+    border: 1px solid #dcdcdc;
+}
+
+/* Placeholder más claro */
+.field-group input::placeholder {
+    color: #b5b5b5;
+}
+
+/* Título más oscuro tipo mockup */
+h1 {
+    color: #2c3e5d;
+}
+
+/* Sombras más suaves */
+.sale-card {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* Select más limpio */
+.field-group select {
+    color: #6b7280;
+}
+
+/* Espaciado del botón */
+.save-button {
+    margin-top: 10px;
+}

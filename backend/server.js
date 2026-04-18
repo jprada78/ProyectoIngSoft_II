@@ -306,6 +306,52 @@ app.post('/api/sales', async (req, res) => {
     }
 });
 
+// REGISTRAR GASTO
+app.post('/api/expenses', async (req, res) => {
+    try {
+        const { description, category, amount } = req.body;
+
+        // Validaciones básicas
+        if (!description || !category || !amount) {
+            return res.status(400).json({
+                message: 'Descripción, categoría y monto son obligatorios',
+            });
+        }
+
+        const numericAmount = Number(amount);
+
+        if (Number.isNaN(numericAmount) || numericAmount <= 0) {
+            return res.status(400).json({
+                message: 'El monto debe ser mayor a 0',
+            });
+        }
+
+        const createdAt = getBogotaDateTime();
+
+        
+        const [result] = await db.execute(
+            `INSERT INTO gastos 
+             (descripcion, categoria, monto, created_at)
+             VALUES (?, ?, ?, ?)`,
+            [
+                description,
+                category,
+                numericAmount,
+                createdAt,
+            ]
+        );
+
+        res.status(201).json({
+            message: 'Gasto registrado correctamente',
+            id: result.insertId,
+        });
+
+    } catch (err) {
+        console.error('ERROR REGISTRAR GASTO:', err);
+        res.status(500).json({ message: err.message });
+    }
+});
+
 
 // RESUMEN DASHBOARD
 app.get('/api/dashboard/summary', async (req, res) => {
