@@ -24,7 +24,13 @@ const db = mysql.createPool({
     waitForConnections: true,
     connectionLimit: 10,
 }).promise();
-
+db.query("SELECT 1")
+  .then(() => {
+    console.log("✅ Base de datos responde correctamente");
+  })
+  .catch(err => {
+    console.error("❌ Error al conectar:", err.message);
+  });
 
 // Abrir en Fronted
 app.get('/', (req, res) => {
@@ -309,7 +315,7 @@ app.post('/api/sales', async (req, res) => {
 // REGISTRAR GASTO
 app.post('/api/expenses', async (req, res) => {
     try {
-        const { description, category, amount } = req.body;
+        const { product, description, category, amount, quantity } = req.body;
 
         // Validaciones básicas
         if (!description || !category || !amount) {
@@ -319,10 +325,23 @@ app.post('/api/expenses', async (req, res) => {
         }
 
         const numericAmount = Number(amount);
+        const numericQuantity =
+            quantity === null || quantity === undefined || quantity === ''
+                ? null
+                : Number(quantity);
 
         if (Number.isNaN(numericAmount) || numericAmount <= 0) {
             return res.status(400).json({
                 message: 'El monto debe ser mayor a 0',
+            });
+        }
+
+        if (
+            numericQuantity !== null &&
+            (!Number.isInteger(numericQuantity) || numericQuantity <= 0)
+        ) {
+            return res.status(400).json({
+                message: 'La cantidad debe ser un número entero mayor a 0',
             });
         }
 
@@ -331,11 +350,13 @@ app.post('/api/expenses', async (req, res) => {
         
         const [result] = await db.execute(
             `INSERT INTO gastos 
-             (descripcion, categoria, monto, created_at)
-             VALUES (?, ?, ?, ?)`,
+             (producto, descripcion, categoria, cantidad, monto, created_at)
+             VALUES (?, ?, ?, ?, ?, ?)`,
             [
+                product ||null,
                 description,
                 category,
+                quantity,
                 numericAmount,
                 createdAt,
             ]

@@ -19,7 +19,6 @@ const EXPENSE_CONFIG = {
     save: "Guardar.png",
   },
 
-  // 👇 CAMBIO IMPORTANTE
   apiUrl: `${API_BASE_URL}/api/expenses`,
 };
 
@@ -29,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupExpenseForm();
 });
 
+/* ================= ICONOS ================= */
 function applyIcons() {
   document.querySelectorAll(".js-icon").forEach((iconElement) => {
     const iconKey = iconElement.dataset.icon;
@@ -43,6 +43,7 @@ function applyIcons() {
   });
 }
 
+/* ================= FORM ================= */
 function setupExpenseForm() {
   const form = document.getElementById("expense-form");
   const message = document.getElementById("form-message");
@@ -51,6 +52,7 @@ function setupExpenseForm() {
     event.preventDefault();
 
     const submitButton = form.querySelector(".save-button");
+
     const expense = getExpenseData(form);
 
     if (!isValidExpense(expense)) {
@@ -78,17 +80,23 @@ function setupExpenseForm() {
   });
 }
 
+/* ================= DATA ================= */
 function getExpenseData(form) {
   const formData = new FormData(form);
 
   return {
+    product: String(formData.get("product") || "").trim(), // ✅ FALTABA
     description: String(formData.get("description") || "").trim(),
     category: String(formData.get("category") || "").trim(),
     amount: Number(formData.get("amount") || 0),
+    quantity: formData.get("quantity")
+      ? Number(formData.get("quantity"))
+      : null, // ✅ IMPORTANTE
     createdAt: new Date().toISOString(),
   };
 }
 
+/* ================= VALIDACIÓN ================= */
 function isValidExpense(expense) {
   return (
     expense.description &&
@@ -97,12 +105,12 @@ function isValidExpense(expense) {
   );
 }
 
+/* ================= API ================= */
 async function saveExpense(expense) {
   const response = await fetch(EXPENSE_CONFIG.apiUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Accept: "application/json",
     },
     body: JSON.stringify(expense),
   });
@@ -116,11 +124,13 @@ async function saveExpense(expense) {
   return data;
 }
 
+/* ================= UI ================= */
 function showMessage(messageElement, text, isError) {
   messageElement.textContent = text;
   messageElement.classList.toggle("form-message--error", isError);
 }
 
+/* ================= LOGOUT ================= */
 function setupLogout() {
   const logoutButton = document.querySelector(".logout-button");
 
@@ -133,6 +143,7 @@ function setupLogout() {
   });
 }
 
+/* ================= MODAL ================= */
 function showSuccessModal() {
   const modal = document.getElementById("success-modal");
 
