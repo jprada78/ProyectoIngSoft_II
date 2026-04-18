@@ -300,7 +300,7 @@ h1 {
 .chart-panel[hidden],
 .empty-state-panel[hidden],
 .stock-alert[hidden] {
-  display: none;
+    display: none;
 }
 
 .panel h2 {
@@ -381,18 +381,18 @@ h1 {
 }
 
 .empty-state-panel {
-  grid-column: 1 / -1;
-  min-height: 154px;
-  display: grid;
-  place-items: center;
-  padding: 28px;
+    grid-column: 1 / -1;
+    min-height: 154px;
+    display: grid;
+    place-items: center;
+    padding: 28px;
 }
 
 .empty-state-panel p {
-  margin: 0;
-  color: #697386;
-  font-size: 22px;
-  text-align: center;
+    margin: 0;
+    color: #697386;
+    font-size: 22px;
+    text-align: center;
 }
 
 .chart-panel h2 {
@@ -415,29 +415,123 @@ h1 {
     visibility: hidden;
 }
 
+.mobile-menu-button,
+.sidebar-close-button,
+.sidebar-overlay {
+    display: none;
+}
+
 @media (max-width: 760px) {
+    body.menu-open {
+        overflow: hidden;
+    }
+
     .dashboard-shell {
         display: block;
     }
 
+    .mobile-menu-button {
+        position: fixed;
+        top: 18px;
+        left: 18px;
+        z-index: 900;
+        width: 58px;
+        height: 58px;
+        border: 0;
+        border-radius: 12px;
+        background: #2d4d75;
+        display: grid;
+        place-items: center;
+        padding: 14px;
+    }
+
+    .mobile-menu-button span {
+        width: 22px;
+        height: 3px;
+        border-radius: 999px;
+        background: #ffffff;
+        display: block;
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 950;
+        display: block;
+        background: rgba(0, 0, 0, 0.42);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+    }
+
+    body.menu-open .sidebar-overlay {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .sidebar-overlay[hidden] {
+        display: none;
+    }
+
     .sidebar {
-        position: static;
-        width: 100%;
-        min-height: auto;
-        padding: 18px 12px;
+        position: fixed;
+        inset: 0 auto 0 0;
+        z-index: 1000;
+        width: min(405px, 86vw);
+        height: 100dvh;
+        min-height: 100vh;
+        padding: 34px 30px 28px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+    }
+
+
+    body.menu-open .sidebar {
+        transform: translateX(0);
     }
 
     .brand {
-        margin-bottom: 18px;
+        margin: 0 0 42px;
+        gap: 14px;
+    }
+
+    .sidebar-close-button {
+        width: 42px;
+        height: 42px;
+        margin-left: auto;
+        border: 0;
+        background: transparent;
+        color: #ffffff;
+        display: grid;
+        place-items: center;
+        font-size: 40px;
+        line-height: 1;
     }
 
     .sidebar__nav {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .nav-item {
+        min-height: 74px;
+        padding: 12px 30px;
+        gap: 22px;
+        font-size: 22px;
+    }
+
+    .nav-item__icon {
+        width: 31px;
+        height: 31px;
     }
 
     .logout-button {
-        margin-top: 18px;
+        min-height: 78px;
+        margin-top: 32px;
+        flex-shrink: 0;
+        font-size: 21px;
     }
 
     .dashboard-content {
@@ -447,8 +541,12 @@ h1 {
     .dashboard-inner {
         max-width: none;
         min-height: auto;
-        padding: 24px 14px 28px;
+        padding: 96px 20px 32px;
         display: block;
+    }
+
+    h1 {
+        margin-bottom: 18px;
     }
 
     .stats-grid {
@@ -456,16 +554,44 @@ h1 {
         margin-bottom: 24px;
     }
 
+    .stat-card {
+        margin-bottom: 22px;
+    }
+
     .stock-alert,
-    .top-products {
+    .top-products,
+    .chart-panel,
+    .empty-state-panel {
         margin-bottom: 24px;
     }
+
+    .product-row {
+        grid-template-columns: 40px 1fr;
+        row-gap: 8px;
+    }
+
+    .product-income-wrap {
+        grid-column: 2;
+        text-align: left;
+    }
+
+    .sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.35);
+        border-radius: 999px;
+    }
+
 }
 
+
 @media (min-width: 761px) and (max-width: 1380px) {
-  :root {
-    --sidebar-width: 300px;
-  }
+    :root {
+        --sidebar-width: 300px;
+    }
+
     .dashboard-inner {
         max-width: none;
         padding-inline: 32px;

@@ -11,12 +11,22 @@
 </head>
 
 <body>
+  <button class="mobile-menu-button" type="button" aria-label="Abrir menú" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <div class="sidebar-overlay" hidden></div>
+
   <main class="sales-shell">
-    <aside class="sidebar" aria-label="Menu principal">
+    <aside class="sidebar" id="sidebar" aria-label="Menu principal">
       <div class="brand">
         <img class="brand__icon js-icon" data-icon="logo" src="" alt="SmartControl">
         <span class="brand__name">SmartControl</span>
+        <button class="sidebar-close-button" type="button" aria-label="Cerrar menú">×</button>
       </div>
+
 
       <nav class="sidebar__nav">
         <a class="nav-item" href="dashboard.html">

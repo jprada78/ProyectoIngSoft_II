@@ -101,8 +101,8 @@ body {
 }
 
 .nav-item--active:hover {
-  color: var(--text-main);
-  background: #ffffff;
+    color: var(--text-main);
+    background: #ffffff;
 }
 
 .nav-item__icon {
@@ -147,7 +147,7 @@ body {
 .sales-inner {
     width: 100%;
     max-width: 1170px;
-    min-height: 100vh;    
+    min-height: 100vh;
     margin: 0 auto;
     padding: 35px 40px 100px;
 }
@@ -309,6 +309,13 @@ h1 {
     visibility: hidden;
 }
 
+.mobile-menu-button,
+.sidebar-close-button,
+.sidebar-overlay {
+    display: none;
+}
+
+
 @media (min-width: 1200px) {
     .sales-inner {
         margin-left: 20px;
@@ -316,32 +323,116 @@ h1 {
 }
 
 @media (max-width: 900px) {
+    body.menu-open {
+        overflow: hidden;
+    }
+
     .sales-shell {
         display: block;
     }
 
+    .mobile-menu-button {
+        position: fixed;
+        top: 18px;
+        left: 18px;
+        z-index: 900;
+        width: 58px;
+        height: 58px;
+        border: 0;
+        border-radius: 12px;
+        background: #2d4d75;
+        display: grid;
+        place-items: center;
+        padding: 14px;
+    }
+
+    .mobile-menu-button span {
+        width: 22px;
+        height: 3px;
+        border-radius: 999px;
+        background: #ffffff;
+        display: block;
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 950;
+        display: block;
+        background: rgba(0, 0, 0, 0.42);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+    }
+
+    body.menu-open .sidebar-overlay {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .sidebar-overlay[hidden] {
+        display: none;
+    }
+
     .sidebar {
-        position: static;
-        width: 100%;
-        min-height: auto;
-        padding: 20px 16px;
+        position: fixed;
+        inset: 0 auto 0 0;
+        z-index: 1000;
+        width: min(405px, 86vw);
+        height: 100dvh;
+        min-height: 100vh;
+        padding: 34px 30px 28px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+    }
+
+
+    body.menu-open .sidebar {
+        transform: translateX(0);
     }
 
     .brand {
-        margin-bottom: 22px;
+        margin: 0 0 42px;
+        gap: 14px;
+    }
+
+    .sidebar-close-button {
+        width: 42px;
+        height: 42px;
+        margin-left: auto;
+        border: 0;
+        background: transparent;
+        color: #ffffff;
+        display: grid;
+        place-items: center;
+        font-size: 40px;
+        line-height: 1;
     }
 
     .sidebar__nav {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
+        grid-template-columns: 1fr;
+        gap: 24px;
     }
 
     .nav-item {
-        padding-inline: 18px;
+        min-height: 74px;
+        padding: 12px 30px;
+        gap: 22px;
+        font-size: 22px;
+    }
+
+    .nav-item__icon {
+        width: 31px;
+        height: 31px;
     }
 
     .logout-button {
-        margin-top: 18px;
+        min-height: 78px;
+        margin-top: 32px;
+        flex-shrink: 0;
+        font-size: 21px;
     }
 
     .sales-content {
@@ -351,9 +442,24 @@ h1 {
     .sales-inner {
         max-width: none;
         margin: 0;
-        padding: 28px 16px;
+        padding: 96px 16px 32px;
     }
+
+    .sale-card {
+        padding: 24px 18px 28px;
+    }
+
+    .sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.35);
+        border-radius: 999px;
+    }
+
 }
+
 
 @media (max-width: 520px) {
     .sidebar__nav {

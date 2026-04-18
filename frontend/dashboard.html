@@ -1,145 +1,150 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SmartControl | Dashboard</title>
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      
-    >
-    <link rel="stylesheet" href="css/dashboard.css">
-  </head>
-  <body>
-    <main class="dashboard-shell">
-      <aside class="sidebar" aria-label="Menu principal">
-        <div class="brand">
-          <img class="brand__icon js-icon" data-icon="logo" src="" alt="SmartControl">
-          <span class="brand__name">SmartControl</span>
-        </div>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartControl | Dashboard</title>
 
-        <nav class="sidebar__nav">
-          <a class="nav-item nav-item--active" href="dashboard.html" aria-current="page">
-            <img class="nav-item__icon js-icon" data-icon="dashboard" src="" alt="">
-            <span>Dashboard</span>
-          </a>
-          <a class="nav-item" href="registroVentas.html">
-            <img class="nav-item__icon js-icon" data-icon="sale" src="" alt="">
-            <span>Registrar Venta</span>
-          </a>
-          <a class="nav-item" href="#">
-            <img class="nav-item__icon js-icon" data-icon="expense" src="" alt="">
-            <span>Registrar Gasto</span>
-          </a>
-          <a class="nav-item" href="#">
-            <img class="nav-item__icon js-icon" data-icon="inventory" src="" alt="">
-            <span>Inventario</span>
-          </a>
-          <a class="nav-item" href="#">
-            <img class="nav-item__icon js-icon" data-icon="corresponsal" src="" alt="">
-            <span>Corresponsal</span>
-          </a>
-          <a class="nav-item" href="#">
-            <img class="nav-item__icon js-icon" data-icon="shortcuts" src="" alt="">
-            <span>Accesos Directos</span>
-          </a>
-          <a class="nav-item" href="#">
-            <img class="nav-item__icon js-icon" data-icon="notifications" src="" alt="">
-            <span>Notificaciones</span>
-          </a>
-        </nav>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
 
-        <button class="logout-button" type="button">
-          <img class="logout-button__icon js-icon" data-icon="logout" src="" alt="">
-          <span>Cerrar Sesión</span>
-        </button>
-      </aside>
+<body>
+  <button class="mobile-menu-button" type="button" aria-label="Abrir menú" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 
-      <section class="dashboard-content">
-        <div class="dashboard-inner">
-          <h1>Dashboard</h1>
+  <div class="sidebar-overlay" hidden></div>
+  <main class="dashboard-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Menu principal">
+      <div class="brand">
+        <img class="brand__icon js-icon" data-icon="logo" src="" alt="SmartControl">
+        <span class="brand__name">SmartControl</span>
+        <button class="sidebar-close-button" type="button" aria-label="Cerrar menú">×</button>
+      </div>
 
-          <section class="stock-alert" id="stock-alert" aria-label="Alerta de stock" hidden>
-            <div class="stock-alert__left">
-              <img class="stock-alert__icon js-icon" data-icon="alert" src="" alt="">
-              <p>
-                <strong>Stock bajo o crítico en <span id="alert-count">1</span> producto</strong>
-                <span id="alert-product">Regla (1)</span>
-              </p>
-            </div>
-            <img class="stock-alert__right-icon js-icon" data-icon="boxAlert" src="" alt="">
-          </section>
+      <nav class="sidebar__nav">
+        <a class="nav-item nav-item--active" href="dashboard.html" aria-current="page">
+          <img class="nav-item__icon js-icon" data-icon="dashboard" src="" alt="">
+          <span>Dashboard</span>
+        </a>
+        <a class="nav-item" href="registroVentas.html">
+          <img class="nav-item__icon js-icon" data-icon="sale" src="" alt="">
+          <span>Registrar Venta</span>
+        </a>
+        <a class="nav-item" href="#">
+          <img class="nav-item__icon js-icon" data-icon="expense" src="" alt="">
+          <span>Registrar Gasto</span>
+        </a>
+        <a class="nav-item" href="#">
+          <img class="nav-item__icon js-icon" data-icon="inventory" src="" alt="">
+          <span>Inventario</span>
+        </a>
+        <a class="nav-item" href="#">
+          <img class="nav-item__icon js-icon" data-icon="corresponsal" src="" alt="">
+          <span>Corresponsal</span>
+        </a>
+        <a class="nav-item" href="#">
+          <img class="nav-item__icon js-icon" data-icon="shortcuts" src="" alt="">
+          <span>Accesos Directos</span>
+        </a>
+        <a class="nav-item" href="#">
+          <img class="nav-item__icon js-icon" data-icon="notifications" src="" alt="">
+          <span>Notificaciones</span>
+        </a>
+      </nav>
 
-          <section class="stats-grid" aria-label="Resumen de ventas">
-            <article class="stat-card">
-              <div>
-                <p class="stat-card__label">Ventas del día</p>
-                <strong class="stat-card__value stat-card__value--blue" id="sales-day">$ 0</strong>
-              </div>
-              <span class="stat-card__icon stat-card__icon--blue">
-                <img class="js-icon" data-icon="salesCard" src="" alt="">
-              </span>
-            </article>
+      <button class="logout-button" type="button">
+        <img class="logout-button__icon js-icon" data-icon="logout" src="" alt="">
+        <span>Cerrar Sesión</span>
+      </button>
+    </aside>
 
-            <article class="stat-card">
-              <div>
-                <p class="stat-card__label">Gastos del día</p>
-                <strong class="stat-card__value stat-card__value--red" id="expenses-day">$ 0</strong>
-              </div>
-              <span class="stat-card__icon stat-card__icon--red">
-                <img class="js-icon" data-icon="expensesCard" src="" alt="">
-              </span>
-            </article>
+    <section class="dashboard-content">
+      <div class="dashboard-inner">
+        <h1>Dashboard</h1>
 
-            <article class="stat-card">
-              <div>
-                <p class="stat-card__label">Ganancia neta</p>
-                <strong class="stat-card__value stat-card__value--green" id="net-profit">$ 0</strong>
-              </div>
-              <span class="stat-card__icon stat-card__icon--green">
-                <img class="js-icon" data-icon="profitCard" src="" alt="">
-              </span>
-            </article>
-
-            <article class="stat-card">
-              <div>
-                <p class="stat-card__label">Total del mes</p>
-                <strong class="stat-card__value" id="month-total">$ 0</strong>
-              </div>
-              <span class="stat-card__icon stat-card__icon--purple">
-                <img class="js-icon" data-icon="calendarCard" src="" alt="">
-              </span>
-            </article>
-          </section>
-
-        <section class="panel top-products">
-            <h2>
-                <img class="panel-title-icon js-icon" data-icon="trend" src="" alt="">
-                <span>Top 5 Productos Más Vendidos</span>
-            </h2>
-            <div id="top-products-list" class="top-products__list"></div>
+        <section class="stock-alert" id="stock-alert" aria-label="Alerta de stock" hidden>
+          <div class="stock-alert__left">
+            <img class="stock-alert__icon js-icon" data-icon="alert" src="" alt="">
+            <p>
+              <strong>Stock bajo o crítico en <span id="alert-count">1</span> producto</strong>
+              <span id="alert-product">Regla (1)</span>
+            </p>
+          </div>
+          <img class="stock-alert__right-icon js-icon" data-icon="boxAlert" src="" alt="">
         </section>
 
-          <section class="panel chart-panel">
-            <h2>Ventas por Tipo (Este Mes)</h2>
-            <div class="chart-wrap">
-              <canvas id="sales-type-chart" width="420" height="180" aria-label="Ventas por tipo este mes"></canvas>
+        <section class="stats-grid" aria-label="Resumen de ventas">
+          <article class="stat-card">
+            <div>
+              <p class="stat-card__label">Ventas del día</p>
+              <strong class="stat-card__value stat-card__value--blue" id="sales-day">$ 0</strong>
             </div>
-          </section>
-          <section class="panel empty-state-panel" id="empty-dashboard">
-            <p>No hay ventas registradas este mes. Comienza registrando tu primera venta.</p>
-          </section>
-        </div>
-      </section>
-    </main>
+            <span class="stat-card__icon stat-card__icon--blue">
+              <img class="js-icon" data-icon="salesCard" src="" alt="">
+            </span>
+          </article>
 
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-      crossorigin="anonymous"
-    ></script>
-    <script src="js/dashboard.js"></script>
-  </body>
+          <article class="stat-card">
+            <div>
+              <p class="stat-card__label">Gastos del día</p>
+              <strong class="stat-card__value stat-card__value--red" id="expenses-day">$ 0</strong>
+            </div>
+            <span class="stat-card__icon stat-card__icon--red">
+              <img class="js-icon" data-icon="expensesCard" src="" alt="">
+            </span>
+          </article>
+
+          <article class="stat-card">
+            <div>
+              <p class="stat-card__label">Ganancia neta</p>
+              <strong class="stat-card__value stat-card__value--green" id="net-profit">$ 0</strong>
+            </div>
+            <span class="stat-card__icon stat-card__icon--green">
+              <img class="js-icon" data-icon="profitCard" src="" alt="">
+            </span>
+          </article>
+
+          <article class="stat-card">
+            <div>
+              <p class="stat-card__label">Total del mes</p>
+              <strong class="stat-card__value" id="month-total">$ 0</strong>
+            </div>
+            <span class="stat-card__icon stat-card__icon--purple">
+              <img class="js-icon" data-icon="calendarCard" src="" alt="">
+            </span>
+          </article>
+        </section>
+
+        <section class="panel top-products">
+          <h2>
+            <img class="panel-title-icon js-icon" data-icon="trend" src="" alt="">
+            <span>Top 5 Productos Más Vendidos</span>
+          </h2>
+          <div id="top-products-list" class="top-products__list"></div>
+        </section>
+
+        <section class="panel chart-panel">
+          <h2>Ventas por Tipo (Este Mes)</h2>
+          <div class="chart-wrap">
+            <canvas id="sales-type-chart" width="420" height="180" aria-label="Ventas por tipo este mes"></canvas>
+          </div>
+        </section>
+        <section class="panel empty-state-panel" id="empty-dashboard">
+          <p>No hay ventas registradas este mes. Comienza registrando tu primera venta.</p>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+
 </html>

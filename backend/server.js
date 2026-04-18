@@ -227,16 +227,27 @@ function getBogotaDateParts() {
 function getDashboardRanges() {
     const { year, month, day } = getBogotaDateParts();
 
+    const currentDate = new Date(`${year}-${month}-${day}T00:00:00`);
+    const tomorrowDate = new Date(currentDate);
+    tomorrowDate.setDate(currentDate.getDate() + 1);
+
+    const nextDayYear = tomorrowDate.getFullYear();
+    const nextDayMonth = String(tomorrowDate.getMonth() + 1).padStart(2, '0');
+    const nextDay = String(tomorrowDate.getDate()).padStart(2, '0');
+
+    const nextMonthStart =
+        month === '12'
+            ? `${Number(year) + 1}-01-01 00:00:00`
+            : `${year}-${String(Number(month) + 1).padStart(2, '0')}-01 00:00:00`;
+
     return {
         todayStart: `${year}-${month}-${day} 00:00:00`,
-        todayEnd: `${year}-${month}-${day} 23:59:59`,
+        tomorrowStart: `${nextDayYear}-${nextDayMonth}-${nextDay} 00:00:00`,
         monthStart: `${year}-${month}-01 00:00:00`,
-        nextMonthStart:
-            month === '12'
-                ? `${Number(year) + 1}-01-01 00:00:00`
-                : `${year}-${String(Number(month) + 1).padStart(2, '0')}-01 00:00:00`,
+        nextMonthStart,
     };
 }
+
 
 
 // REGISTRAR VENTA
@@ -310,14 +321,16 @@ app.post('/api/sales', async (req, res) => {
 // RESUMEN DASHBOARD
 app.get('/api/dashboard/summary', async (req, res) => {
     try {
-        const { todayStart, todayEnd, monthStart, nextMonthStart } = getDashboardRanges();
+        const { todayStart, tomorrowStart, monthStart, nextMonthStart } = getDashboardRanges();
+
 
         const [[salesDayRow]] = await db.execute(
             `SELECT COALESCE(SUM(monto), 0) AS total
-             FROM ventas
-             WHERE created_at BETWEEN ? AND ?`,
-            [todayStart, todayEnd]
+            FROM ventas
+            WHERE created_at >= ? AND created_at < ?`,
+            [todayStart, tomorrowStart]
         );
+
 
         const [[monthRow]] = await db.execute(
             `SELECT COALESCE(SUM(monto), 0) AS total
@@ -361,7 +374,7 @@ app.get('/api/dashboard/summary', async (req, res) => {
             cards: {
                 salesDay,
                 expensesDay: 0,
-                netProfit: salesDay,
+                netProfit: monthTotal,
                 monthTotal,
             },
             topProducts: topProductsRows.map(row => ({

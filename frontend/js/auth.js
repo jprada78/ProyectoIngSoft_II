@@ -1,4 +1,7 @@
-const API_URL = "https://proyectoingsoft-ii.onrender.com";
+const API_URL =
+    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+        ? "http://localhost:3000"
+        : "https://proyectoingsoft-ii.onrender.com";
 // REGISTRO DESDE FRONTEND
 
 document.getElementById("btnGuardar").addEventListener("click", async () => {
@@ -91,11 +94,7 @@ document.getElementById("btnLogin").addEventListener("click", async () => {
         const data = await res.text();
 
         if (res.ok) {
-            alert("✅ Bienvenido");
-
-            // REDIRECCIÓN AL DASHBOARD
             window.location.href = "dashboard.html";
-
         } else {
             alert(data);
         }

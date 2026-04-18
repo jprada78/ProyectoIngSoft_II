@@ -57,6 +57,7 @@ let currentDashboardData = fallbackData;
 document.addEventListener("DOMContentLoaded", async () => {
     applyIcons();
     setupLogout();
+    setupMobileMenu();
     renderDashboard(fallbackData);
 
     const dashboardData = await loadDashboardData();
@@ -275,3 +276,44 @@ function setupLogout() {
         window.location.href = "index.html";
     });
 }
+
+function setupMobileMenu() {
+    const openButton = document.querySelector(".mobile-menu-button");
+    const closeButton = document.querySelector(".sidebar-close-button");
+    const overlay = document.querySelector(".sidebar-overlay");
+    const navLinks = document.querySelectorAll(".sidebar .nav-item");
+
+    if (!openButton || !overlay) return;
+
+    const openMenu = () => {
+        document.body.classList.add("menu-open");
+        overlay.hidden = false;
+        openButton.setAttribute("aria-expanded", "true");
+    };
+
+    const closeMenu = () => {
+        document.body.classList.remove("menu-open");
+        openButton.setAttribute("aria-expanded", "false");
+
+        setTimeout(() => {
+            if (!document.body.classList.contains("menu-open")) {
+                overlay.hidden = true;
+            }
+        }, 200);
+    };
+
+    openButton.addEventListener("click", openMenu);
+    closeButton?.addEventListener("click", closeMenu);
+    overlay.addEventListener("click", closeMenu);
+
+    navLinks.forEach((link) => {
+        link.addEventListener("click", closeMenu);
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            closeMenu();
+        }
+    });
+}
+

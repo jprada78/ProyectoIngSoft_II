@@ -28,8 +28,10 @@ const SALE_CONFIG = {
 document.addEventListener("DOMContentLoaded", () => {
   applyIcons();
   setupLogout();
+  setupMobileMenu();
   setupSaleForm();
 });
+
 
 function applyIcons() {
   document.querySelectorAll(".js-icon").forEach((iconElement) => {
@@ -154,4 +156,44 @@ function showSuccessModal() {
   if (!modal) return;
 
   modal.hidden = false;
+}
+
+function setupMobileMenu() {
+  const openButton = document.querySelector(".mobile-menu-button");
+  const closeButton = document.querySelector(".sidebar-close-button");
+  const overlay = document.querySelector(".sidebar-overlay");
+  const navLinks = document.querySelectorAll(".sidebar .nav-item");
+
+  if (!openButton || !overlay) return;
+
+  const openMenu = () => {
+    document.body.classList.add("menu-open");
+    overlay.hidden = false;
+    openButton.setAttribute("aria-expanded", "true");
+  };
+
+  const closeMenu = () => {
+    document.body.classList.remove("menu-open");
+    openButton.setAttribute("aria-expanded", "false");
+
+    setTimeout(() => {
+      if (!document.body.classList.contains("menu-open")) {
+        overlay.hidden = true;
+      }
+    }, 200);
+  };
+
+  openButton.addEventListener("click", openMenu);
+  closeButton?.addEventListener("click", closeMenu);
+  overlay.addEventListener("click", closeMenu);
+
+  navLinks.forEach((link) => {
+    link.addEventListener("click", closeMenu);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeMenu();
+    }
+  });
 }
