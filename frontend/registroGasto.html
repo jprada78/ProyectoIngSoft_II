@@ -12,14 +12,25 @@
 </head>
 
 <body>
+
+  <button class="mobile-menu-button" type="button" aria-label="Abrir menú" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <div class="sidebar-overlay" hidden></div>
+
   <main class="sales-shell">
 
     <!-- SIDEBAR -->
-    <aside class="sidebar" aria-label="Menu principal">
+    <aside class="sidebar" id="sidebar" aria-label="Menu principal">
       <div class="brand">
         <img class="brand__icon js-icon" data-icon="logo" src="" alt="SmartControl">
         <span class="brand__name">SmartControl</span>
+        <button class="sidebar-close-button" type="button" aria-label="Cerrar menú">×</button>
       </div>
+
 
       <nav class="sidebar__nav">
         <a class="nav-item" href="dashboard.html">
@@ -35,6 +46,8 @@
         <a class="nav-item nav-item--active" href="registroGasto.html" aria-current="page">
           <img class="nav-item__icon js-icon" data-icon="expense" src="" alt="">
           <span>Registrar Gasto</span>
+        </a>
+
         </a>
         <a class="nav-item" href="#">
           <img class="nav-item__icon js-icon" data-icon="inventory" src="" alt="">
@@ -76,8 +89,7 @@
 
           <label class="field-group" for="description">
             <span>Descripción</span>
-            <input id="description" name="description" type="text"
-              placeholder="Ej: Compra de cuadernos" required>
+            <input id="description" name="description" type="text" placeholder="Ej: Compra de cuadernos" required>
           </label>
 
           <label class="field-group" for="category">
@@ -94,17 +106,16 @@
             </select>
           </label>
 
-          <label class="field-group" for="amount">
+          <label class="field-group" for="quantity">
             <span>Cantidad (Opcional)</span>
-            <input id="amount" name="amount" type="number" min="0" step="100"
-              placeholder="Ej: 2" required>
+            <input id="quantity" name="quantity" type="number" min="1" step="1" placeholder="Ej: 2">
           </label>
 
           <label class="field-group" for="amount">
             <span>Monto</span>
-            <input id="amount" name="amount" type="number" min="0" step="100"
-              placeholder="0" required>
+            <input id="amount" name="amount" type="number" min="0" step="100" placeholder="0" required>
           </label>
+
 
           <p class="form-message" id="form-message"></p>
 
@@ -143,10 +154,13 @@
       message.classList.remove('form-message--error');
 
       const data = {
+        product: form.product.value,
         description: form.description.value,
         category: form.category.value,
+        quantity: form.quantity.value || null,
         amount: form.amount.value
       };
+
 
       try {
         const res = await fetch('/api/expenses', {
@@ -180,5 +194,6 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/registroGasto.js"></script>
 </body>
+
 </html>
 ```
