@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,14 +11,24 @@
 </head>
 
 <body>
+  <button class="mobile-menu-button" type="button" aria-label="Abrir menú" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <div class="sidebar-overlay" hidden></div>
   <main class="sales-shell">
 
     <!-- SIDEBAR -->
-    <aside class="sidebar" aria-label="Menu principal">
+    <aside class="sidebar" id="sidebar" aria-label="Menu principal">
+
       <div class="brand">
         <img class="brand__icon js-icon" data-icon="logo" src="" alt="SmartControl">
         <span class="brand__name">SmartControl</span>
+        <button class="sidebar-close-button" type="button" aria-label="Cerrar menú">×</button>
       </div>
+
 
       <nav class="sidebar__nav">
         <a class="nav-item" href="dashboard.html">
@@ -30,7 +41,7 @@
           <span>Registrar Venta</span>
         </a>
 
-        <a class="nav-item" href="registroGasto.html" aria-current="page">
+        <a class="nav-item" href="registroGasto.html">
           <img class="nav-item__icon js-icon" data-icon="expense" src="" alt="">
           <span>Registrar Gasto</span>
         </a>
@@ -42,7 +53,7 @@
           <img class="nav-item__icon js-icon" data-icon="corresponsal" src="" alt="">
           <span>Corresponsal</span>
         </a>
-        <a class="nav-item nav-item--active" href="acceso_directo.html">
+        <a class="nav-item nav-item--active" href="acceso_directo.html" aria-current="page">
           <img class="nav-item__icon js-icon" data-icon="shortcuts" src="" alt="">
           <span>Accesos Directos</span>
         </a>
@@ -58,80 +69,81 @@
       </button>
     </aside>
 
-  <!-- CONTENIDO -->
-  <section class="dashboard-content">
-    <div class="dashboard-inner">
-      <h1>Accesos Directos</h1>
+    <!-- CONTENIDO -->
+    <section class="dashboard-content">
+      <div class="dashboard-inner">
+        <h1>Accesos Directos</h1>
 
-      <div class="row g-4">
+        <div class="row g-4">
 
-        <!-- Bancolombia -->
-        <div class="col-md-4">
-          <a href="https://www.grupobancolombia.com/" target="_blank" class="card p-4 text-decoration-none shadow">
-            <h3>B</h3>
-            <h5>Bancolombia</h5>
-            <p>Banca en línea</p>
-          </a>
+          <!-- Bancolombia -->
+          <div class="col-12 col-sm-6 col-xl-4">
+            <a href="https://www.grupobancolombia.com/" target="_blank" class="card p-4 text-decoration-none shadow">
+              <h3>B</h3>
+              <h5>Bancolombia</h5>
+              <p>Banca en línea</p>
+            </a>
+          </div>
+
+          <!-- Davivienda -->
+          <div class="col-12 col-sm-6 col-xl-4">
+            <a href="https://www.davivienda.com/" target="_blank" class="card p-4 text-decoration-none shadow">
+              <h3>D</h3>
+              <h5>Davivienda</h5>
+              <p>Portal Bancario</p>
+            </a>
+          </div>
+
+          <!-- Nequi -->
+          <div class="col-12 col-sm-6 col-xl-4">
+            <a href="https://www.nequi.com.co/" target="_blank" class="card p-4 text-decoration-none shadow">
+              <h3>N</h3>
+              <h5>Nequi</h5>
+            </a>
+          </div>
+
+          <!-- PSE -->
+          <div class="col-12 col-sm-6 col-xl-4">
+            <a href="https://www.pse.com.co/" target="_blank" class="card p-4 text-decoration-none shadow">
+              <h3>P</h3>
+              <h5>PSE</h5>
+              <p>Pagos en línea</p>
+            </a>
+          </div>
+
+          <!-- Portal Tributario -->
+          <div class="col-12 col-sm-6 col-xl-4">
+            <a href="https://www.dian.gov.co/" target="_blank" class="card p-4 text-decoration-none shadow">
+              <h3>PT</h3>
+              <h5>Portal Tributario</h5>
+              <p>Impuestos</p>
+            </a>
+          </div>
+
+          <!-- Tradición y Libertad -->
+          <div class="col-12 col-sm-6 col-xl-4">
+            <a href="https://www.supernotariado.gov.co/" target="_blank" class="card p-4 text-decoration-none shadow">
+              <h3>TL</h3>
+              <h5>Tradición y Libertad</h5>
+              <p>Certificados</p>
+            </a>
+          </div>
+
+          <!-- PTM -->
+          <div class="col-12 col-sm-6 col-xl-4">
+            <a href="https://www.ptm.com.co/" target="_blank" class="card p-4 text-decoration-none shadow">
+              <h3>PTM</h3>
+              <h5>PTM</h5>
+            </a>
+          </div>
+
         </div>
-
-        <!-- Davivienda -->
-        <div class="col-md-4">
-          <a href="https://www.davivienda.com/" target="_blank" class="card p-4 text-decoration-none shadow">
-            <h3>D</h3>
-            <h5>Davivienda</h5>
-            <p>Portal Bancario</p>
-          </a>
-        </div>
-
-        <!-- Nequi -->
-        <div class="col-md-4">
-          <a href="https://www.nequi.com.co/" target="_blank" class="card p-4 text-decoration-none shadow">
-            <h3>N</h3>
-            <h5>Nequi</h5>
-          </a>
-        </div>
-
-        <!-- PSE -->
-        <div class="col-md-4">
-          <a href="https://www.pse.com.co/" target="_blank" class="card p-4 text-decoration-none shadow">
-            <h3>P</h3>
-            <h5>PSE</h5>
-            <p>Pagos en línea</p>
-          </a>
-        </div>
-
-        <!-- Portal Tributario -->
-        <div class="col-md-4">
-          <a href="https://www.dian.gov.co/" target="_blank" class="card p-4 text-decoration-none shadow">
-            <h3>PT</h3>
-            <h5>Portal Tributario</h5>
-            <p>Impuestos</p>
-          </a>
-        </div>
-
-        <!-- Tradición y Libertad -->
-        <div class="col-md-4">
-          <a href="https://www.supernotariado.gov.co/" target="_blank" class="card p-4 text-decoration-none shadow">
-            <h3>TL</h3>
-            <h5>Tradición y Libertad</h5>
-            <p>Certificados</p>
-          </a>
-        </div>
-
-        <!-- PTM -->
-        <div class="col-md-4">
-          <a href="https://www.ptm.com.co/" target="_blank" class="card p-4 text-decoration-none shadow">
-            <h3>PTM</h3>
-            <h5>PTM</h5>
-          </a>
-        </div>
-
       </div>
-    </div>
-  </section>
+    </section>
 
-</main>
+  </main>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/accesosDirectos.js"></script>
 </body>
+
 </html>
