@@ -160,46 +160,49 @@ function renderTopProducts(products) {
 }
 
 function drawSalesByTypeChart(items) {
-    if (!items || items.length === 0) return;
     const canvas = document.getElementById("sales-type-chart");
     const context = canvas.getContext("2d");
+
     const dpr = window.devicePixelRatio || 1;
     const cssWidth = canvas.clientWidth || 600;
-    const cssHeight = canvas.clientHeight || 260;
+    const cssHeight = canvas.clientHeight || 320;
 
     canvas.width = Math.floor(cssWidth * dpr);
     canvas.height = Math.floor(cssHeight * dpr);
     context.setTransform(dpr, 0, 0, dpr, 0, 0);
     context.clearRect(0, 0, cssWidth, cssHeight);
 
+    if (!items || items.length === 0) return;
+
     const padding = {
-        top: 8,
-        right: 18,
-        bottom: 31,
-        left: 39,
+        top: 22,
+        right: 24,
+        bottom: 48,
+        left: 78,
     };
 
     const chartWidth = cssWidth - padding.left - padding.right;
     const chartHeight = cssHeight - padding.top - padding.bottom;
-    const maxValue = Math.max(3000, ...items.map((item) => item.value));
-    const ticks = [0, 1000, 2000, 3000];
+    const rawMaxValue = Math.max(...items.map((item) => Number(item.value) || 0));
+    const maxValue = getNiceMaxValue(rawMaxValue);
+    const ticks = getChartTicks(maxValue, 5);
 
-    context.font = "12px Arial, Helvetica, sans-serif";
+    context.font = "14px Arial, Helvetica, sans-serif";
     context.lineWidth = 1;
 
     ticks.forEach((tick) => {
         const y = padding.top + chartHeight - (tick / maxValue) * chartHeight;
 
-        context.strokeStyle = tick === 0 ? "#7f828a" : "#d8d9df";
+        context.strokeStyle = tick === 0 ? "#7f828a" : "#e1e5ec";
         context.beginPath();
         context.moveTo(padding.left, y);
         context.lineTo(padding.left + chartWidth, y);
         context.stroke();
 
-        context.fillStyle = "#666a73";
+        context.fillStyle = "#4f5663";
         context.textAlign = "right";
         context.textBaseline = "middle";
-        context.fillText(`$${tick / 1000}k`, padding.left - 8, y);
+        context.fillText(formatChartMoney(tick), padding.left - 12, y);
     });
 
     context.strokeStyle = "#7f828a";
@@ -209,16 +212,15 @@ function drawSalesByTypeChart(items) {
     context.lineTo(padding.left + chartWidth, padding.top + chartHeight);
     context.stroke();
 
-    if (items.length === 0) return;
-
     const gap = 28;
     const barArea = chartWidth - gap * 2;
-    const barWidth = Math.min(263, Math.max(38, barArea / items.length - 14));
+    const slotWidth = barArea / items.length;
+    const barWidth = Math.min(260, Math.max(48, slotWidth * 0.62));
 
     items.forEach((item, index) => {
-        const slotWidth = barArea / items.length;
+        const value = Number(item.value) || 0;
         const x = padding.left + gap + slotWidth * index + (slotWidth - barWidth) / 2;
-        const barHeight = (item.value / maxValue) * chartHeight;
+        const barHeight = (value / maxValue) * chartHeight;
         const y = padding.top + chartHeight - barHeight;
 
         roundRect(context, x, y, barWidth, barHeight, 8, "#3164e5");
@@ -226,8 +228,57 @@ function drawSalesByTypeChart(items) {
         context.fillStyle = "#666a73";
         context.textAlign = "center";
         context.textBaseline = "top";
-        context.fillText(item.label, x + barWidth / 2, padding.top + chartHeight + 10);
+        context.font = "14px Arial, Helvetica, sans-serif";
+        context.fillText(item.label, x + barWidth / 2, padding.top + chartHeight + 14);
     });
+}
+
+function getNiceMaxValue(value) {
+    if (value <= 0) return 1000;
+
+    const magnitude = 10 ** Math.floor(Math.log10(value));
+    const normalized = value / magnitude;
+
+    let niceNormalized;
+
+    if (normalized <= 1) {
+        niceNormalized = 1;
+    } else if (normalized <= 2) {
+        niceNormalized = 2;
+    } else if (normalized <= 5) {
+        niceNormalized = 5;
+    } else {
+        niceNormalized = 10;
+    }
+
+    return niceNormalized * magnitude;
+}
+
+function getChartTicks(maxValue, tickCount) {
+    const step = maxValue / tickCount;
+    const ticks = [];
+
+    for (let index = 0; index <= tickCount; index += 1) {
+        ticks.push(step * index);
+    }
+
+    return ticks;
+}
+
+function formatChartMoney(value) {
+    if (value >= 1000000) {
+        return `$${removeTrailingZero(value / 1000000)}M`;
+    }
+
+    if (value >= 1000) {
+        return `$${removeTrailingZero(value / 1000)}k`;
+    }
+
+    return `$${Math.round(value)}`;
+}
+
+function removeTrailingZero(value) {
+    return Number.isInteger(value) ? String(value) : value.toFixed(1);
 }
 
 function roundRect(context, x, y, width, height, radius, color) {

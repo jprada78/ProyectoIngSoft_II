@@ -318,16 +318,28 @@ app.post('/api/sales', async (req, res) => {
 // REGISTRAR GASTO
 app.post('/api/expenses', async (req, res) => {
     try {
-        const { description, category, amount } = req.body;
+        const {
+            product,
+            description,
+            category,
+            quantity,
+            amount
+        } = req.body;
 
-        // Validaciones básicas
         if (!description || !category || !amount) {
             return res.status(400).json({
                 message: 'Descripción, categoría y monto son obligatorios',
             });
         }
 
+        const normalizedCategory = category.trim().toLowerCase();
+        const isInventoryExpense = normalizedCategory === 'inventario';
+
         const numericAmount = Number(amount);
+        const numericQuantity =
+            quantity === null || quantity === undefined || quantity === ''
+                ? null
+                : Number(quantity);
 
         if (Number.isNaN(numericAmount) || numericAmount <= 0) {
             return res.status(400).json({
@@ -335,17 +347,40 @@ app.post('/api/expenses', async (req, res) => {
             });
         }
 
+        if (isInventoryExpense && numericQuantity === null) {
+            return res.status(400).json({
+                message: 'La cantidad es obligatoria para gastos de inventario',
+            });
+        }
+
+        if (
+            numericQuantity !== null &&
+            (!Number.isInteger(numericQuantity) || numericQuantity <= 0)
+        ) {
+            return res.status(400).json({
+                message: 'La cantidad debe ser un número entero mayor a 0',
+            });
+        }
+
+        const unitAmount = isInventoryExpense ? numericAmount : null;
+        const totalAmount = isInventoryExpense
+            ? numericAmount * numericQuantity
+            : numericAmount;
+
+        const finalQuantity = isInventoryExpense ? numericQuantity : null;
         const createdAt = getBogotaDateTime();
 
-        
         const [result] = await db.execute(
             `INSERT INTO gastos 
-             (descripcion, categoria, monto, created_at)
-             VALUES (?, ?, ?, ?)`,
+             (producto, descripcion, categoria, cantidad, valor_unitario, monto, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [
+                product || null,
                 description,
                 category,
-                numericAmount,
+                finalQuantity,
+                unitAmount,
+                totalAmount,
                 createdAt,
             ]
         );
@@ -353,6 +388,9 @@ app.post('/api/expenses', async (req, res) => {
         res.status(201).json({
             message: 'Gasto registrado correctamente',
             id: result.insertId,
+            totalAmount,
+            unitAmount,
+            quantity: finalQuantity,
         });
 
     } catch (err) {
@@ -361,41 +399,58 @@ app.post('/api/expenses', async (req, res) => {
     }
 });
 
-
 // RESUMEN DASHBOARD
 app.get('/api/dashboard/summary', async (req, res) => {
     try {
         const { todayStart, tomorrowStart, monthStart, nextMonthStart } = getDashboardRanges();
 
-
+        // Ventas del día
         const [[salesDayRow]] = await db.execute(
             `SELECT COALESCE(SUM(monto), 0) AS total
-            FROM ventas
-            WHERE created_at >= ? AND created_at < ?`,
+             FROM ventas
+             WHERE created_at >= ? AND created_at < ?`,
             [todayStart, tomorrowStart]
         );
 
+        // Gastos del día
+        const [[expensesDayRow]] = await db.execute(
+            `SELECT COALESCE(SUM(monto), 0) AS total
+             FROM gastos
+             WHERE created_at >= ? AND created_at < ?`,
+            [todayStart, tomorrowStart]
+        );
 
-        const [[monthRow]] = await db.execute(
+        // Ventas del mes
+        const [[monthSalesRow]] = await db.execute(
             `SELECT COALESCE(SUM(monto), 0) AS total
              FROM ventas
              WHERE created_at >= ? AND created_at < ?`,
             [monthStart, nextMonthStart]
         );
 
+        // Gastos del mes
+        const [[monthExpensesRow]] = await db.execute(
+            `SELECT COALESCE(SUM(monto), 0) AS total
+             FROM gastos
+             WHERE created_at >= ? AND created_at < ?`,
+            [monthStart, nextMonthStart]
+        );
+
+        // Top 5 productos vendidos del mes
         const [topProductsRows] = await db.execute(
             `SELECT 
                 COALESCE(NULLIF(producto, ''), descripcion) AS name,
                 COALESCE(SUM(COALESCE(cantidad, 1)), 0) AS units,
                 COALESCE(SUM(monto), 0) AS income
-            FROM ventas
-            WHERE created_at >= ? AND created_at < ?
-            GROUP BY COALESCE(NULLIF(producto, ''), descripcion)
-            ORDER BY income DESC
-            LIMIT 5`,
+             FROM ventas
+             WHERE created_at >= ? AND created_at < ?
+             GROUP BY COALESCE(NULLIF(producto, ''), descripcion)
+             ORDER BY income DESC
+             LIMIT 5`,
             [monthStart, nextMonthStart]
         );
 
+        // Ventas por tipo del mes
         const [salesByTypeRows] = await db.execute(
             `SELECT 
                 tipo_venta AS label,
@@ -408,7 +463,10 @@ app.get('/api/dashboard/summary', async (req, res) => {
         );
 
         const salesDay = Number(salesDayRow.total);
-        const monthTotal = Number(monthRow.total);
+        const expensesDay = Number(expensesDayRow.total);
+        const monthSales = Number(monthSalesRow.total);
+        const monthExpenses = Number(monthExpensesRow.total);
+        const netProfit = monthSales - monthExpenses;
 
         res.json({
             alert: {
@@ -417,9 +475,9 @@ app.get('/api/dashboard/summary', async (req, res) => {
             },
             cards: {
                 salesDay,
-                expensesDay: 0,
-                netProfit: monthTotal,
-                monthTotal,
+                expensesDay,
+                netProfit,
+                monthTotal: monthSales,
             },
             topProducts: topProductsRows.map(row => ({
                 name: row.name,
@@ -437,6 +495,7 @@ app.get('/api/dashboard/summary', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+
 
 
 // SERVIDOR

@@ -7,7 +7,7 @@
   <title>SmartControl | Registrar Gasto</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/registroVentas.css">
+  <link rel="stylesheet" href="css/registrarGasto.css">
 </head>
 
 <body>
@@ -47,11 +47,11 @@
           <span>Registrar Gasto</span>
         </a>
 
-        </a>
         <a class="nav-item" href="#">
           <img class="nav-item__icon js-icon" data-icon="inventory" src="" alt="">
           <span>Inventario</span>
         </a>
+
         <a class="nav-item" href="#">
           <img class="nav-item__icon js-icon" data-icon="corresponsal" src="" alt="">
           <span>Corresponsal</span>
@@ -80,10 +80,16 @@
 
         <form class="sale-card" id="expense-form" autocomplete="off">
 
-          <label class="field-group" for="product">
-            <span> Producto del inventario (Opcional)</span>
+          <div class="sale-card__title">
+            <img class="sale-card__title-icon js-icon" data-icon="expense" src="" alt="">
+            <span>Producto del inventario (opcional)</span>
+          </div>
+
+          <label class="field field--with-icon" for="product">
+            <span class="visually-hidden">Producto</span>
             <img class="field__icon js-icon" data-icon="search" src="" alt="">
-            <input id="product" name="product" type="search" placeholder="Buscar producto o venta manual">
+            <input id="product" name="product" type="search"
+              placeholder="Buscar producto o gasto manual del inventario">
           </label>
 
           <label class="field-group" for="description">
@@ -111,8 +117,11 @@
           </label>
 
           <label class="field-group" for="amount">
-            <span>Monto</span>
+            <span>Monto o valor unitario</span>
             <input id="amount" name="amount" type="number" min="0" step="100" placeholder="0" required>
+            <small class="field-help">
+              Si la categoría es Inventario, este valor se multiplicará por la cantidad.
+            </small>
           </label>
 
 
@@ -141,57 +150,9 @@
     </div>
   </div>
 
-  <script>
-    const form = document.getElementById('expense-form');
-    const modal = document.getElementById('success-modal');
-    const message = document.getElementById('form-message');
-
-    form.addEventListener('submit', async function (e) {
-      e.preventDefault();
-
-      message.textContent = "";
-      message.classList.remove('form-message--error');
-
-      const data = {
-        product: form.product.value,
-        description: form.description.value,
-        category: form.category.value,
-        quantity: form.quantity.value || null,
-        amount: form.amount.value
-      };
-
-
-      try {
-        const res = await fetch('/api/expenses', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-
-        const result = await res.json();
-
-        if (!res.ok) {
-          message.textContent = result.message;
-          message.classList.add('form-message--error');
-          return;
-        }
-
-        modal.hidden = false;
-
-        setTimeout(() => {
-          modal.hidden = true;
-          form.reset();
-        }, 2000);
-
-      } catch (err) {
-        console.error(err);
-        message.textContent = 'Error al conectar con el servidor';
-        message.classList.add('form-message--error');
-      }
-    });
-  </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/registroGasto.js"></script>
+
 </body>
 
 </html>
