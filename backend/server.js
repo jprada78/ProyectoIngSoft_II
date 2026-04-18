@@ -399,6 +399,67 @@ app.post('/api/expenses', async (req, res) => {
     }
 });
 
+// REGISTRAR TRANSACCIÓN CORRESPONSAL
+app.post('/api/corresponsal', async (req, res) => {
+    try {
+        const {
+            transactionType,
+            entity,
+            amount,
+            commission
+        } = req.body;
+
+        if (!transactionType || !entity || !amount) {
+            return res.status(400).json({
+                message: 'Tipo de transacción, entidad y monto son obligatorios',
+            });
+        }
+
+        const numericAmount = Number(amount);
+        const numericCommission =
+            commission === null || commission === undefined || commission === ''
+                ? 0
+                : Number(commission);
+
+        if (Number.isNaN(numericAmount) || numericAmount <= 0) {
+            return res.status(400).json({
+                message: 'El monto debe ser mayor a 0',
+            });
+        }
+
+        if (Number.isNaN(numericCommission) || numericCommission < 0) {
+            return res.status(400).json({
+                message: 'La comisión no puede ser negativa',
+            });
+        }
+
+        const createdAt = getBogotaDateTime();
+
+        const [result] = await db.execute(
+            `INSERT INTO corresponsal 
+            (tipo_transaccion, entidad, monto, comision_ganada, created_at)
+            VALUES (?, ?, ?, ?, ?)`,
+            [
+                transactionType,
+                entity,
+                numericAmount,
+                numericCommission,
+                createdAt,
+            ]
+        );
+
+        res.status(201).json({
+            message: 'Transacción registrada correctamente',
+            id: result.insertId,
+        });
+
+    } catch (err) {
+        console.error('ERROR REGISTRAR CORRESPONSAL:', err);
+        res.status(500).json({ message: err.message });
+    }
+});
+
+
 // RESUMEN DASHBOARD
 app.get('/api/dashboard/summary', async (req, res) => {
     try {
@@ -408,6 +469,14 @@ app.get('/api/dashboard/summary', async (req, res) => {
         const [[salesDayRow]] = await db.execute(
             `SELECT COALESCE(SUM(monto), 0) AS total
              FROM ventas
+             WHERE created_at >= ? AND created_at < ?`,
+            [todayStart, tomorrowStart]
+        );
+
+        // Comisión corresponsal del día
+        const [[commissionDayRow]] = await db.execute(
+            `SELECT COALESCE(SUM(comision_ganada), 0) AS total
+             FROM corresponsal
              WHERE created_at >= ? AND created_at < ?`,
             [todayStart, tomorrowStart]
         );
@@ -424,6 +493,14 @@ app.get('/api/dashboard/summary', async (req, res) => {
         const [[monthSalesRow]] = await db.execute(
             `SELECT COALESCE(SUM(monto), 0) AS total
              FROM ventas
+             WHERE created_at >= ? AND created_at < ?`,
+            [monthStart, nextMonthStart]
+        );
+
+        // Comisión corresponsal del mes
+        const [[monthCommissionRow]] = await db.execute(
+            `SELECT COALESCE(SUM(comision_ganada), 0) AS total
+             FROM corresponsal
              WHERE created_at >= ? AND created_at < ?`,
             [monthStart, nextMonthStart]
         );
@@ -463,10 +540,16 @@ app.get('/api/dashboard/summary', async (req, res) => {
         );
 
         const salesDay = Number(salesDayRow.total);
+        const commissionDay = Number(commissionDayRow.total);
         const expensesDay = Number(expensesDayRow.total);
+
         const monthSales = Number(monthSalesRow.total);
+        const monthCommission = Number(monthCommissionRow.total);
         const monthExpenses = Number(monthExpensesRow.total);
-        const netProfit = monthSales - monthExpenses;
+
+        const dayIncome = salesDay + commissionDay;
+        const monthIncome = monthSales + monthCommission;
+        const netProfit = monthIncome - monthExpenses;
 
         res.json({
             alert: {
@@ -474,10 +557,10 @@ app.get('/api/dashboard/summary', async (req, res) => {
                 product: '',
             },
             cards: {
-                salesDay,
+                salesDay: dayIncome,
                 expensesDay,
                 netProfit,
-                monthTotal: monthSales,
+                monthTotal: monthIncome,
             },
             topProducts: topProductsRows.map(row => ({
                 name: row.name,
@@ -495,8 +578,6 @@ app.get('/api/dashboard/summary', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
-
-
 
 // SERVIDOR
 const PORT = process.env.PORT || 3000;

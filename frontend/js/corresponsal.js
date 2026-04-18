@@ -19,17 +19,16 @@ const CORRESPONSAL_CONFIG = {
     save: "Guardar.png",
   },
 
-  // 🔥 endpoint diferente
   apiUrl: `${API_BASE_URL}/api/corresponsal`,
 };
 
 document.addEventListener("DOMContentLoaded", () => {
   applyIcons();
   setupLogout();
+  setupMobileMenu();
   setupCorresponsalForm();
 });
 
-/* ================= ICONOS ================= */
 function applyIcons() {
   document.querySelectorAll(".js-icon").forEach((iconElement) => {
     const iconKey = iconElement.dataset.icon;
@@ -44,10 +43,11 @@ function applyIcons() {
   });
 }
 
-/* ================= FORM ================= */
 function setupCorresponsalForm() {
   const form = document.getElementById("corresponsal-form");
   const message = document.getElementById("form-message");
+
+  if (!form) return;
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -56,7 +56,7 @@ function setupCorresponsalForm() {
     const data = getCorresponsalData(form);
 
     if (!isValidData(data)) {
-      showMessage(message, "Completa todos los campos obligatorios.", true);
+      showMessage(message, "Completa tipo, entidad y monto.", true);
       return;
     }
 
@@ -66,12 +66,14 @@ function setupCorresponsalForm() {
     try {
       await saveData(data);
       form.reset();
+      showMessage(message, "", false);
       showSuccessModal();
 
       setTimeout(() => {
         window.location.href = "dashboard.html";
       }, 1300);
     } catch (error) {
+      console.error(error);
       showMessage(message, "No se pudo guardar la transacción.", true);
     } finally {
       submitButton.disabled = false;
@@ -79,7 +81,6 @@ function setupCorresponsalForm() {
   });
 }
 
-/* ================= DATA ================= */
 function getCorresponsalData(form) {
   const formData = new FormData(form);
 
@@ -88,25 +89,19 @@ function getCorresponsalData(form) {
     entity: String(formData.get("entity") || "").trim(),
     amount: Number(formData.get("amount") || 0),
     commission: Number(formData.get("commission") || 0),
-    createdAt: new Date().toISOString(),
   };
 }
 
-/* ================= VALIDACIÓN ================= */
 function isValidData(data) {
-  return (
-    data.transactionType &&
-    data.entity &&
-    data.amount > 0
-  );
+  return data.transactionType && data.entity && data.amount > 0;
 }
 
-/* ================= API ================= */
 async function saveData(data) {
   const response = await fetch(CORRESPONSAL_CONFIG.apiUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Accept: "application/json",
     },
     body: JSON.stringify(data),
   });
@@ -120,7 +115,6 @@ async function saveData(data) {
   return result;
 }
 
-/* ================= UI ================= */
 function showMessage(messageElement, text, isError) {
   if (!messageElement) return;
 
@@ -135,7 +129,6 @@ function showSuccessModal() {
   modal.hidden = false;
 }
 
-/* ================= LOGOUT ================= */
 function setupLogout() {
   const logoutButton = document.querySelector(".logout-button");
 
@@ -150,3 +143,42 @@ function setupLogout() {
   });
 }
 
+function setupMobileMenu() {
+  const openButton = document.querySelector(".mobile-menu-button");
+  const closeButton = document.querySelector(".sidebar-close-button");
+  const overlay = document.querySelector(".sidebar-overlay");
+  const navLinks = document.querySelectorAll(".sidebar .nav-item");
+
+  if (!openButton || !overlay) return;
+
+  const openMenu = () => {
+    document.body.classList.add("menu-open");
+    overlay.hidden = false;
+    openButton.setAttribute("aria-expanded", "true");
+  };
+
+  const closeMenu = () => {
+    document.body.classList.remove("menu-open");
+    openButton.setAttribute("aria-expanded", "false");
+
+    setTimeout(() => {
+      if (!document.body.classList.contains("menu-open")) {
+        overlay.hidden = true;
+      }
+    }, 200);
+  };
+
+  openButton.addEventListener("click", openMenu);
+  closeButton?.addEventListener("click", closeMenu);
+  overlay.addEventListener("click", closeMenu);
+
+  navLinks.forEach((link) => {
+    link.addEventListener("click", closeMenu);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeMenu();
+    }
+  });
+}
