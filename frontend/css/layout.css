@@ -3,11 +3,13 @@
 /* ===================================== */
 
 .app-container {
+    width: 100%;
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
-    justify-content: center;   /* Centra horizontal */
-    align-items: flex-start;       /* Centra vertical */
-    padding-top: 10rem;             /* Espacio lateral para que no se pegue */
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px 16px;
 }
 
 /* ===================================== */
@@ -17,10 +19,28 @@
 .screen {
     display: none;
     width: 100%;
-    max-width: 500px;          /* Ancho fijo */
+    max-width: 500px;
+    margin: 0 auto;
     text-align: center;
 }
 
 .screen.active {
     display: block;
+}
+
+@media (max-width: 520px) {
+    .app-container {
+        align-items: start;
+        padding: 24px 14px 32px;
+    }
+
+    .screen {
+        max-width: 100%;
+    }
+}
+
+@media (max-height: 760px) {
+    .app-container {
+        align-items: start;
+    }
 }

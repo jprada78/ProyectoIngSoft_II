@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Papelería SmartControl</title>
 
     <!-- Estilos base -->
@@ -10,59 +13,59 @@
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/auth.css">
 </head>
+
 <body>
 
-    <!-- ============================= -->
-    <!-- CONTENEDOR PRINCIPAL APP -->
-    <!-- ============================= -->
-    <section id="login-inicial" class="screen active">
+    <main class="app-container">
+        <!-- ============================= -->
+        <!-- CONTENEDOR PRINCIPAL APP -->
+        <!-- ============================= -->
+        <section id="login-inicial" class="screen active">
 
-    <!-- LOGO PRINCIPAL -->
-    <div class="logo-container">
-        <div class="logo-box">
-            <img src="icons/logo.png" alt="Logo SmartControl">
-        </div>
+            <!-- LOGO PRINCIPAL -->
+            <div class="logo-container">
+                <div class="logo-box">
+                    <img src="icons/logo.png" alt="Logo SmartControl">
+                </div>
 
-        <h1>Papelería SmartControl</h1>
-        <p class="subtitle">Sistema de administración inteligente</p>
-    </div>
-
-    <!-- CARD LOGIN -->
-    <div class="card">
-
-        <!-- ICONO CANDADO + TITULO -->
-        <div class="card-header">
-            <div class="icon-light">
-                🔒
+                <h1>Papelería SmartControl</h1>
+                <p class="subtitle">Sistema de administración inteligente</p>
             </div>
-            <h2>Ingreso administrador</h2>
-        </div>
 
-        <label class="label-left">Contraseña</label>
+            <!-- CARD LOGIN -->
+            <div class="card">
 
-        <input id="loginPassword" type="password"
-               class="input-large"
-               placeholder="Ingrese su contraseña">
+                <!-- ICONO CANDADO + TITULO -->
+                <div class="card-header">
+                    <div class="icon-light">
+                        🔒
+                    </div>
+                    <h2>Ingreso administrador</h2>
+                </div>
 
-        <button id="btnLogin" class="btn-primary btn-large">
-            Ingresar
-        </button>
+                <label class="label-left">Contraseña</label>
 
-        <a href="#" id="link-registrar" class="link-centered">
-            Registrar contraseña por primera vez
-        </a>
+                <input id="loginPassword" type="password" class="input-large" placeholder="Ingrese su contraseña">
 
-    </div>
+                <button id="btnLogin" class="btn-primary btn-large">
+                    Ingresar
+                </button>
 
-    <div class="divider">o</div>
+                <a href="#" id="link-registrar" class="link-centered">
+                    Registrar contraseña por primera vez
+                </a>
 
-    <!-- BOTON GOOGLE -->
-    <button class="btn-google btn-large google-flex">
-        <img src="icons/google.png" class="google-icon">
-        Iniciar sesión con Google
-    </button>
+            </div>
 
-</section>
+            <div class="divider">o</div>
+
+            <!-- BOTON GOOGLE -->
+            <button class="btn-google btn-large google-flex">
+                <img src="icons/google.png" class="google-icon">
+                Iniciar sesión con Google
+            </button>
+
+        </section>
 
 
         <!-- ============================= -->
@@ -164,7 +167,7 @@
                 <label>Confirmar contraseña</label>
                 <input id="confirmarNuevaPassword" type="password" placeholder="Repita la contraseña">
 
-            
+
 
                 <div class="button-group">
                     <button id="btnCancelarNueva" class="btn-secondary">Cancelar</button>
@@ -183,4 +186,5 @@
     <script src="js/app.js" defer></script>
 
 </body>
+
 </html>
