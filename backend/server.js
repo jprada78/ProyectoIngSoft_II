@@ -248,8 +248,6 @@ function getDashboardRanges() {
     };
 }
 
-
-
 // REGISTRAR VENTA
 app.post('/api/sales', async (req, res) => {
     try {
