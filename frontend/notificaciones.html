@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SmartControl | Notificaciones</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/notificaciones.css">
+</head>
+
+<body>
+    <main class="sales-shell">
+        <aside class="sidebar" aria-label="Menu principal">
+            <div class="brand">
+                <img class="brand__icon js-icon" data-icon="logo" src="" alt="SmartControl">
+                <span class="brand__name">SmartControl</span>
+            </div>
+
+            <nav class="sidebar__nav">
+                <a class="nav-item" href="dashboard.html">
+                    <img class="nav-item__icon js-icon" data-icon="dashboard" src="" alt="">
+                    <span>Dashboard</span>
+                </a>
+                <a class="nav-item" href="registroVentas.html">
+                    <img class="nav-item__icon js-icon" data-icon="sale" src="" alt="">
+                    <span>Registrar Venta</span>
+                </a>
+                <a class="nav-item" href="registroGasto.html">
+                    <img class="nav-item__icon js-icon" data-icon="expense" src="" alt="">
+                    <span>Registrar Gasto</span>
+                </a>
+                <a class="nav-item" href="#">
+                    <img class="nav-item__icon js-icon" data-icon="inventory" src="" alt="">
+                    <span>Inventario</span>
+                </a>
+                <a class="nav-item" href="corresponsal.html">
+                    <img class="nav-item__icon js-icon" data-icon="corresponsal" src="" alt="">
+                    <span>Corresponsal</span>
+                </a>
+                <a class="nav-item" href="acceso_directo.html">
+                    <img class="nav-item__icon js-icon" data-icon="shortcuts" src="" alt="">
+                    <span>Accesos Directos</span>
+                </a>
+                <a class="nav-item nav-item--active" href="notificaciones.html" aria-current="page">
+                    <img class="nav-item__icon js-icon" data-icon="notifications" src="" alt="">
+                    <span>Notificaciones</span>
+                </a>
+            </nav>
+
+            <button class="logout-button" type="button">
+                <img class="logout-button__icon js-icon" data-icon="logout" src="" alt="">
+                <span>Cerrar Sesión</span>
+            </button>
+        </aside>
+
+        <section class="sales-content">
+            <div class="sales-inner">
+                <h1>Configuración de Notificaciones</h1>
+                <p class="subtitle">Gestione las alertas de inventario</p>
+
+                <form class="sale-card" id="notifications-form">
+
+                    <!-- CANALES -->
+                    <div class="sale-card__title">
+                        <span>Canales de Notificación</span>
+                    </div>
+
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="email">
+
+                        <div class="checkbox-content">
+                            <div class="checkbox-title">
+                                <img src="./icons/mensaje.png" alt="Email" class="checkbox-icon">
+                                <strong>Notificaciones por correo electrónico</strong>
+                            </div>
+
+                            <p>Reciba alertas en su Email</p>
+                        </div>
+                    </label>
+
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="sms">
+
+                        <div class="checkbox-content">
+                            <div class="checkbox-title">
+                                <img src="./icons/charla.png" alt="SMS" class="checkbox-icon">
+                                <strong>Notificaciones por SMS</strong>
+                            </div>
+
+                            <p class="checkbox-desc">Reciba alertas por mensaje de texto</p>
+                        </div>
+                    </label>
+
+                    <!-- TIPOS -->
+                    <div class="sale-card__title">
+                        <span>Tipos de alertas</span>
+                    </div>
+
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="out-stock">
+                    
+                        <div class="checkbox-content">
+                            <div class="checkbox-title">
+                                <span class="status-dot dot-red"></span>
+                                <strong>Producto agotado</strong>
+                            </div>
+                    
+                            <p class="checkbox-desc">Cuando el stock llegue a 0</p>
+                        </div>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="critical-stock">
+                    
+                        <div class="checkbox-content">
+                            <div class="checkbox-title">
+                                <span class="status-dot dot-orange"></span>
+                                <strong>Stock crítico</strong>
+                            </div>
+                    
+                            <p class="checkbox-desc">Cuando el stock alcance el mínimo configurado</p>
+                        </div>
+                    </label>
+
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="low-stock">
+                    
+                        <div class="checkbox-content">
+                            <div class="checkbox-title">
+                                <span class="status-dot dot-yellow"></span>
+                                <strong>Stock bajo</strong>
+                            </div>
+                    
+                            <p class="checkbox-desc">Cuando esté cerca del mínimo</p>
+                        </div>
+                    </label>
+
+                    <!-- NOTA -->
+                    <div class="info-box">
+                        <div class="info-title">
+                            <img src="./icons/campana.png" alt="Nota" class="info-icon">
+                            <strong>Nota importante</strong>
+                        </div>
+                    
+                        <p>Las alertas se mostrarán también en el Dashboard.</p>
+                    </div>
+
+                    <p class="form-message" id="form-message"></p>
+
+                <button class="save-button" type="submit">
+                    <img class="save-button__icon js-icon" data-icon="save" src="" alt="">
+                    <span>Guardar Configuración</span>
+                </button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL -->
+    <div class="success-modal" id="success-modal" hidden>
+        <div class="success-modal__backdrop"></div>
+        <div class="success-modal__card">
+            <div class="success-modal__icon">
+                <span></span>
+            </div>
+            <p>¡Configuración guardada!</p>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/notificaciones.js"></script>
+</body>
+
+</html>

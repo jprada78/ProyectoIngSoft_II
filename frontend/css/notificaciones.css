@@ -1,0 +1,385 @@
+:root {
+    --sidebar-width: 300px;
+    --sidebar-bg: #1E3A5F;
+    --page-bg: #F0F5FA;
+    --text-main: #1E3A5F;
+    --text-dark: #202124;
+    --card-bg: #ffffff;
+    --border: #d7d7d7;
+    --shadow: 0 3px 4px rgba(38, 58, 89, 0.26);
+    --radius: 12px;
+
+    --brand-icon-size: 50px;
+    --sidebar-icon-size: 30px;
+    --logout-icon-size: 32px;
+    --form-title-icon-size: 31px;
+    --field-icon-size: 25px;
+    --save-icon-size: 25px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--page-bg);
+    color: var(--text-main);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.sales-shell {
+    min-height: 100vh;
+    display: flex;
+    background: var(--page-bg);
+}
+
+.sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: var(--sidebar-width);
+    background: var(--sidebar-bg);
+    color: #f5f8fc;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 30px 20px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 20px 60px;
+}
+
+.brand__icon {
+    width: var(--brand-icon-size);
+    height: var(--brand-icon-size);
+    object-fit: contain;
+}
+
+.brand__name {
+    color: #ffffff;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.sidebar__nav {
+    display: grid;
+    gap: 18px;
+}
+
+.nav-item {
+    min-height: 31px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 30px;
+    border-radius: var(--radius);
+    color: #eaf0f8;
+    font-size: 18px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.nav-item:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.09);
+}
+
+.nav-item--active {
+    background: #ffffff;
+    color: var(--text-main);
+}
+
+.nav-item--active:hover {
+    color: var(--text-main);
+    background: #ffffff;
+}
+
+.nav-item__icon {
+    width: var(--sidebar-icon-size);
+    height: var(--sidebar-icon-size);
+}
+
+.logout-button {
+    width: 100%;
+    min-height: 55px;
+    margin-top: auto;
+    border: 1px solid rgba(255, 255, 255, 0.68);
+    border-radius: var(--radius);
+    background: transparent;
+    color: #f7fbff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 11px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.logout-button:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.logout-button__icon {
+    width: var(--logout-icon-size);
+    height: var(--logout-icon-size);
+}
+
+.sales-content {
+    width: 100%;
+    min-height: 100vh;
+    margin-left: var(--sidebar-width);
+}
+
+.sales-inner {
+    width: 100%;
+    max-width: 1170px;
+    margin: 0 auto;
+    padding: 35px 40px 100px;
+}
+
+h1 {
+    margin: 0 0 10px;
+    font-size: 35px;
+    font-weight: 800;
+}
+
+.subtitle {
+    margin-bottom: 30px;
+    color: #6b7280;
+    font-size: 16px;
+}
+
+/* CARD */
+.sale-card {
+    width: 100%;
+    padding: 30px 28px 36px;
+    border-radius: var(--radius);
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+}
+
+.sale-card__title {
+    margin: 25px 0 15px;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* CHECKBOX CARDS */
+.checkbox-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: #f9fafb;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.checkbox-card:hover {
+    background: #f1f5f9;
+}
+
+.checkbox-card input {
+    width: 18px;
+    height: 18px;
+    margin-top: 4px;
+    accent-color: #2563EB;
+}
+
+.checkbox-card strong {
+    display: block;
+    font-size: 16px;
+}
+
+.checkbox-card p {
+    margin: 2px 0 0;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.checkbox-card input:checked + div strong {
+    color: #2563EB;
+}
+
+/* INFO BOX */
+.info-box {
+    margin: 20px 0;
+    padding: 16px 18px;
+    border-radius: var(--radius);
+    background: #eef4ff;
+    border: 1px solid #c7d7ff;
+}
+
+.info-box strong {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.info-box p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* BOTON */
+.save-button {
+    width: 100%;
+    height: 50px;
+    border: 0;
+    border-radius: var(--radius);
+    background: #10b981;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.save-button:hover {
+    background: #0ea371;
+}
+
+/* MODAL */
+.success-modal[hidden] {
+    display: none;
+}
+
+.success-modal {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+}
+
+.success-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.success-modal__card {
+    position: relative;
+    width: 350px;
+    padding: 30px;
+    border-radius: 16px;
+    background: white;
+    text-align: center;
+}
+
+.success-modal__icon {
+    width: 80px;
+    height: 80px;
+    border: 6px solid #10b981;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+}
+
+.success-modal__card p {
+    font-weight: bold;
+}
+
+.checkbox-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* fila icono + titulo */
+.checkbox-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* icono pequeño */
+.checkbox-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+/* descripcion debajo */
+.checkbox-desc {
+    margin: 2px 0 0 24px; /* clave para alinearlo debajo del texto, no del checkbox */
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* PUNTICO BASE */
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* COLORES */
+.dot-red {
+    background-color: #ef4444;
+}
+
+/* (opcional para después) */
+.dot-orange {
+    background-color: #f97316;
+}
+
+.dot-yellow {
+    background-color: #facc15;
+}
+
+.info-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.info-icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
+
+.info-box strong {
+    font-size: 15px;
+    color: #1E3A5F;
+}
+
+.info-box p {
+    margin: 0;
+    font-size: 14px;
+    color: #4b5563;
+}
+
+.save-button {
+    width: 100%;
+    height: 44px;
+    border: 0;
+    border-radius: var(--radius);
+    background: #10b981;
+    color: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.save-button__icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}

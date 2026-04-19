@@ -44,6 +44,15 @@ app.get('/test-db', async (req, res) => {
     }
 });
 
+(async () => {
+    try {
+        await db.execute('SELECT 1');
+        console.log('✅ Conexión a MySQL exitosa');
+    } catch (err) {
+        console.error('❌ Error conectando a MySQL:', err.message);
+    }
+})();
+
 
 // REGISTRO
 app.post('/register', async (req, res) => {
@@ -351,6 +360,43 @@ app.post('/api/expenses', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+//REGISTRAR TRANSACCIÓN
+
+app.post('/api/corresponsal', async (req, res) => {
+    try {
+        const { transactionType, entity, amount, commission } = req.body;
+
+        if (!transactionType || !entity || !amount) {
+            return res.status(400).json({
+                message: 'Campos obligatorios faltantes'
+            });
+        }
+
+        const createdAt = getBogotaDateTime();
+
+        const [result] = await db.execute(
+            `INSERT INTO corresponsal 
+            (tipo_transaccion, entidad, monto, comision_ganada, created_at)
+            VALUES (?, ?, ?, ?, ?)`,
+            [
+                transactionType,
+                entity,
+                Number(amount),
+                Number(commission) || 0,
+                createdAt
+            ]
+        );
+
+        res.status(201).json({
+            message: 'Transacción guardada con éxito ✅',
+            id: result.insertId
+        });
+
+    } catch (err) {
+        console.error('Error corresponsal:', err);
+        res.status(500).json({ message: 'Error interno del servidor' });
+    }
+});
 
 
 // RESUMEN DASHBOARD
@@ -426,6 +472,10 @@ app.get('/api/dashboard/summary', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+
+
+
+
 
 
 // SERVIDOR

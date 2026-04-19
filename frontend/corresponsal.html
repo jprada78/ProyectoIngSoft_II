@@ -43,7 +43,7 @@
             <img class="nav-item__icon js-icon" data-icon="shortcuts" src="" alt="">
             <span>Accesos Directos</span>
             </a>
-            <a class="nav-item" href="#">
+            <a class="nav-item" href="notificaciones.html">
             <img class="nav-item__icon js-icon" data-icon="notifications" src="" alt="">
             <span>Notificaciones</span>
             </a>
@@ -60,7 +60,7 @@
           <!-- Tipo -->
           <label class="field-group">
             <span>Tipo de transacción</span>
-            <select required>
+            <select name="transactionType" required>
               <option value="" disabled selected>Seleccionar tipo</option>
               <option>Retiro</option>
               <option>Recarga</option>
@@ -72,7 +72,7 @@
 
           <!-- Entidad -->
           <label class="field-group">
-            <span>Entidad</span>
+            <select name="entity" required>
             <select required>
               <option value="" disabled selected>Seleccionar entidad</option>
               <option>Bancolombia</option>
@@ -90,17 +90,18 @@
           <!-- Monto -->
           <label class="field-group">
             <span>Monto</span>
-            <input type="number" min="0" placeholder="0" required>
+            <input name="amount" type="number" min="0" required>
           </label>
 
           <!-- Comisión -->
           <label class="field-group">
             <span>Comisión ganada</span>
-            <input type="number" min="0" placeholder="0">
+            <input name="commission" type="number" min="0">
           </label>
 
           <button class="save-button" type="submit">
-            Guardar Transacción
+            <img class="save-button__icon js-icon" data-icon="save" src="" alt="">
+            <span>Guardar Transacción</span>
           </button>
 
         </form>
