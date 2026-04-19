@@ -459,6 +459,217 @@ app.post('/api/corresponsal', async (req, res) => {
     }
 });
 
+// LISTAR PRODUCTOS DE INVENTARIO
+app.get('/api/products', async (req, res) => {
+    try {
+        const [rows] = await db.execute(
+            `SELECT 
+                id,
+                nombre,
+                categoria,
+                precio_venta,
+                costo,
+                stock,
+                stock_minimo,
+                created_at
+             FROM inventario
+             ORDER BY created_at DESC`
+        );
+
+        res.json(
+            rows.map(row => ({
+                id: row.id,
+                name: row.nombre,
+                category: row.categoria,
+                salePrice: Number(row.precio_venta),
+                cost: Number(row.costo),
+                stock: Number(row.stock),
+                minStock: Number(row.stock_minimo),
+                createdAt: row.created_at,
+            }))
+        );
+    } catch (err) {
+        console.error('ERROR LISTAR INVENTARIO:', err);
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// REGISTRAR PRODUCTO EN INVENTARIO
+app.post('/api/products', async (req, res) => {
+    try {
+        const {
+            id,
+            name,
+            category,
+            salePrice,
+            cost,
+            stock,
+            minStock
+        } = req.body;
+
+        if (!id || !name || !category || salePrice === undefined || cost === undefined || stock === undefined || minStock === undefined) {
+            return res.status(400).json({
+                message: 'Todos los campos son obligatorios',
+            });
+        }
+
+        const numericSalePrice = Number(salePrice);
+        const numericCost = Number(cost);
+        const numericStock = Number(stock);
+        const numericMinStock = Number(minStock);
+
+        if (Number.isNaN(numericSalePrice) || numericSalePrice < 0) {
+            return res.status(400).json({ message: 'El precio de venta no es válido' });
+        }
+
+        if (Number.isNaN(numericCost) || numericCost < 0) {
+            return res.status(400).json({ message: 'El costo no es válido' });
+        }
+
+        if (!Number.isInteger(numericStock) || numericStock < 0) {
+            return res.status(400).json({ message: 'El stock debe ser un entero mayor o igual a 0' });
+        }
+
+        if (!Number.isInteger(numericMinStock) || numericMinStock < 0) {
+            return res.status(400).json({ message: 'El stock mínimo debe ser un entero mayor o igual a 0' });
+        }
+
+        const [existing] = await db.execute(
+            'SELECT id FROM inventario WHERE id = ? LIMIT 1',
+            [id]
+        );
+
+        if (existing.length > 0) {
+            return res.status(400).json({
+                message: 'Ya existe un producto con ese ID',
+            });
+        }
+
+        const createdAt = getBogotaDateTime();
+
+        await db.execute(
+            `INSERT INTO inventario
+             (id, nombre, categoria, precio_venta, costo, stock, stock_minimo, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                id,
+                name,
+                category,
+                numericSalePrice,
+                numericCost,
+                numericStock,
+                numericMinStock,
+                createdAt,
+            ]
+        );
+
+        res.status(201).json({
+            message: 'Producto registrado correctamente',
+            id,
+        });
+    } catch (err) {
+        console.error('ERROR REGISTRAR PRODUCTO:', err);
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// EDITAR PRODUCTO DE INVENTARIO
+app.put('/api/products', async (req, res) => {
+    try {
+        const {
+            id,
+            name,
+            category,
+            salePrice,
+            cost,
+            stock,
+            minStock
+        } = req.body;
+
+        if (!id || !name || !category || salePrice === undefined || cost === undefined || stock === undefined || minStock === undefined) {
+            return res.status(400).json({
+                message: 'Todos los campos son obligatorios',
+            });
+        }
+
+        const numericSalePrice = Number(salePrice);
+        const numericCost = Number(cost);
+        const numericStock = Number(stock);
+        const numericMinStock = Number(minStock);
+
+        if (Number.isNaN(numericSalePrice) || numericSalePrice < 0) {
+            return res.status(400).json({ message: 'El precio de venta no es válido' });
+        }
+
+        if (Number.isNaN(numericCost) || numericCost < 0) {
+            return res.status(400).json({ message: 'El costo no es válido' });
+        }
+
+        if (!Number.isInteger(numericStock) || numericStock < 0) {
+            return res.status(400).json({ message: 'El stock debe ser un entero mayor o igual a 0' });
+        }
+
+        if (!Number.isInteger(numericMinStock) || numericMinStock < 0) {
+            return res.status(400).json({ message: 'El stock mínimo debe ser un entero mayor o igual a 0' });
+        }
+
+        const [result] = await db.execute(
+            `UPDATE inventario
+             SET nombre = ?, categoria = ?, precio_venta = ?, costo = ?, stock = ?, stock_minimo = ?
+             WHERE id = ?`,
+            [
+                name,
+                category,
+                numericSalePrice,
+                numericCost,
+                numericStock,
+                numericMinStock,
+                id,
+            ]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                message: 'Producto no encontrado',
+            });
+        }
+
+        res.json({
+            message: 'Producto actualizado correctamente',
+            id,
+        });
+    } catch (err) {
+        console.error('ERROR ACTUALIZAR PRODUCTO:', err);
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// ELIMINAR PRODUCTO DE INVENTARIO
+app.delete('/api/products/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const [result] = await db.execute(
+            'DELETE FROM inventario WHERE id = ?',
+            [id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                message: 'Producto no encontrado',
+            });
+        }
+
+        res.json({
+            message: 'Producto eliminado correctamente',
+            id,
+        });
+    } catch (err) {
+        console.error('ERROR ELIMINAR PRODUCTO:', err);
+        res.status(500).json({ message: err.message });
+    }
+});
+
 
 // RESUMEN DASHBOARD
 app.get('/api/dashboard/summary', async (req, res) => {
