@@ -9,7 +9,7 @@ const CONFIG = {
   icons: {
     logo: "logo.png",
     dashboard: "dashboard2.png",
-    sale: "carrito1.png",
+    sale: "carrito2.png",
     expense: "factura2.png",
     inventory: "Inventario2.png",
     corresponsal: "corresponsal2.png",
