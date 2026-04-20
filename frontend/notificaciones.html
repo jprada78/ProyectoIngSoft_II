@@ -11,12 +11,22 @@
 </head>
 
 <body>
+    <button class="mobile-menu-button" type="button" aria-label="Abrir menú" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <div class="sidebar-overlay" hidden></div>
+
     <main class="sales-shell">
         <aside class="sidebar" aria-label="Menu principal">
             <div class="brand">
                 <img class="brand__icon js-icon" data-icon="logo" src="" alt="SmartControl">
                 <span class="brand__name">SmartControl</span>
+                <button class="sidebar-close-button" type="button" aria-label="Cerrar menú">×</button>
             </div>
+
 
             <nav class="sidebar__nav">
                 <a class="nav-item" href="dashboard.html">
@@ -31,7 +41,7 @@
                     <img class="nav-item__icon js-icon" data-icon="expense" src="" alt="">
                     <span>Registrar Gasto</span>
                 </a>
-                <a class="nav-item" href="#">
+                <a class="nav-item" href="inventario.html">
                     <img class="nav-item__icon js-icon" data-icon="inventory" src="" alt="">
                     <span>Inventario</span>
                 </a>
@@ -76,9 +86,15 @@
                                 <strong>Notificaciones por correo electrónico</strong>
                             </div>
 
-                            <p>Reciba alertas en su Email</p>
+                            <p class="checkbox-desc">Reciba alertas en su Email</p>
                         </div>
                     </label>
+
+                    <div class="contact-field contact-field--email" id="email-field" hidden>
+                        <label class="contact-field__label" for="email-address">Correo electrónico</label>
+                        <input id="email-address" type="email" class="contact-field__input"
+                            placeholder="correo@ejemplo.com">
+                    </div>
 
                     <label class="checkbox-card">
                         <input type="checkbox" id="sms">
@@ -93,6 +109,12 @@
                         </div>
                     </label>
 
+                    <div class="contact-field contact-field--sms" id="sms-field" hidden>
+                        <label class="contact-field__label" for="sms-number">Número de celular</label>
+                        <input id="sms-number" type="tel" class="contact-field__input" placeholder="+57 300 123 4567">
+                    </div>
+
+
                     <!-- TIPOS -->
                     <div class="sale-card__title">
                         <span>Tipos de alertas</span>
@@ -100,38 +122,38 @@
 
                     <label class="checkbox-card">
                         <input type="checkbox" id="out-stock">
-                    
+
                         <div class="checkbox-content">
                             <div class="checkbox-title">
                                 <span class="status-dot dot-red"></span>
                                 <strong>Producto agotado</strong>
                             </div>
-                    
+
                             <p class="checkbox-desc">Cuando el stock llegue a 0</p>
                         </div>
                     </label>
                     <label class="checkbox-card">
                         <input type="checkbox" id="critical-stock">
-                    
+
                         <div class="checkbox-content">
                             <div class="checkbox-title">
                                 <span class="status-dot dot-orange"></span>
                                 <strong>Stock crítico</strong>
                             </div>
-                    
+
                             <p class="checkbox-desc">Cuando el stock alcance el mínimo configurado</p>
                         </div>
                     </label>
 
                     <label class="checkbox-card">
                         <input type="checkbox" id="low-stock">
-                    
+
                         <div class="checkbox-content">
                             <div class="checkbox-title">
                                 <span class="status-dot dot-yellow"></span>
                                 <strong>Stock bajo</strong>
                             </div>
-                    
+
                             <p class="checkbox-desc">Cuando esté cerca del mínimo</p>
                         </div>
                     </label>
@@ -142,16 +164,16 @@
                             <img src="./icons/campana.png" alt="Nota" class="info-icon">
                             <strong>Nota importante</strong>
                         </div>
-                    
+
                         <p>Las alertas se mostrarán también en el Dashboard.</p>
                     </div>
 
                     <p class="form-message" id="form-message"></p>
 
-                <button class="save-button" type="submit">
-                    <img class="save-button__icon js-icon" data-icon="save" src="" alt="">
-                    <span>Guardar Configuración</span>
-                </button>
+                    <button class="save-button" type="submit">
+                        <img class="save-button__icon js-icon" data-icon="save" src="" alt="">
+                        <span>Guardar Configuración</span>
+                    </button>
                 </form>
             </div>
         </section>

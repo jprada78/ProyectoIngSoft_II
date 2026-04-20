@@ -25,7 +25,9 @@ const CONFIG = {
 document.addEventListener("DOMContentLoaded", () => {
   applyIcons();
   setupLogout();
+  setupMobileMenu();
   setupNotificationsForm();
+  setupChannelFields();
   loadSavedConfig();
 });
 
@@ -37,7 +39,9 @@ function applyIcons() {
     if (!file) return;
 
     el.src = `${CONFIG.iconBasePath}${file}`;
-    el.onerror = () => el.style.visibility = "hidden";
+    el.onerror = () => {
+      el.style.visibility = "hidden";
+    };
   });
 }
 
@@ -46,6 +50,8 @@ function setupNotificationsForm() {
   const form = document.getElementById("notifications-form");
   const message = document.getElementById("form-message");
 
+  if (!form || !message) return;
+
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -53,7 +59,7 @@ function setupNotificationsForm() {
     const config = getFormData();
 
     if (!isValidConfig(config)) {
-      showMessage(message, "Activa al menos un canal de notificación.", true);
+      showMessage(message, "Activa al menos un canal y completa su dato.", true);
       return;
     }
 
@@ -62,10 +68,8 @@ function setupNotificationsForm() {
 
     try {
       localStorage.setItem(CONFIG.storageKey, JSON.stringify(config));
-
       showSuccessModal();
       showMessage(message, "Configuración guardada correctamente.", false);
-
     } catch (err) {
       showMessage(message, "Error al guardar configuración.", true);
     } finally {
@@ -74,11 +78,40 @@ function setupNotificationsForm() {
   });
 }
 
+/* MOSTRAR / OCULTAR CAMPOS */
+function setupChannelFields() {
+  const emailCheckbox = document.getElementById("email");
+  const smsCheckbox = document.getElementById("sms");
+
+  emailCheckbox?.addEventListener("change", updateChannelFields);
+  smsCheckbox?.addEventListener("change", updateChannelFields);
+
+  updateChannelFields();
+}
+
+function updateChannelFields() {
+  const emailChecked = document.getElementById("email")?.checked;
+  const smsChecked = document.getElementById("sms")?.checked;
+
+  const emailField = document.getElementById("email-field");
+  const smsField = document.getElementById("sms-field");
+
+  if (emailField) {
+    emailField.hidden = !emailChecked;
+  }
+
+  if (smsField) {
+    smsField.hidden = !smsChecked;
+  }
+}
+
 /* OBTENER DATOS */
 function getFormData() {
   return {
     email: document.getElementById("email").checked,
     sms: document.getElementById("sms").checked,
+    emailAddress: String(document.getElementById("email-address")?.value || "").trim(),
+    smsNumber: String(document.getElementById("sms-number")?.value || "").trim(),
     outStock: document.getElementById("out-stock").checked,
     criticalStock: document.getElementById("critical-stock").checked,
     lowStock: document.getElementById("low-stock").checked,
@@ -87,13 +120,28 @@ function getFormData() {
 
 /* VALIDACION */
 function isValidConfig(config) {
-  return config.email || config.sms;
+  if (!config.email && !config.sms) {
+    return false;
+  }
+
+  if (config.email && !config.emailAddress) {
+    return false;
+  }
+
+  if (config.sms && !config.smsNumber) {
+    return false;
+  }
+
+  return true;
 }
 
 /* CARGAR CONFIG GUARDADA */
 function loadSavedConfig() {
   const saved = localStorage.getItem(CONFIG.storageKey);
-  if (!saved) return;
+  if (!saved) {
+    updateChannelFields();
+    return;
+  }
 
   try {
     const config = JSON.parse(saved);
@@ -104,6 +152,15 @@ function loadSavedConfig() {
     document.getElementById("critical-stock").checked = config.criticalStock || false;
     document.getElementById("low-stock").checked = config.lowStock || false;
 
+    if (document.getElementById("email-address")) {
+      document.getElementById("email-address").value = config.emailAddress || "";
+    }
+
+    if (document.getElementById("sms-number")) {
+      document.getElementById("sms-number").value = config.smsNumber || "";
+    }
+
+    updateChannelFields();
   } catch (e) {
     console.error("Error cargando configuración", e);
   }
@@ -125,6 +182,47 @@ function setupLogout() {
     localStorage.removeItem("smartcontrol_token");
     sessionStorage.clear();
     window.location.href = "index.html";
+  });
+}
+
+/* MENU MOBILE */
+function setupMobileMenu() {
+  const openButton = document.querySelector(".mobile-menu-button");
+  const closeButton = document.querySelector(".sidebar-close-button");
+  const overlay = document.querySelector(".sidebar-overlay");
+  const navLinks = document.querySelectorAll(".sidebar .nav-item");
+
+  if (!openButton || !overlay) return;
+
+  const openMenu = () => {
+    document.body.classList.add("menu-open");
+    overlay.hidden = false;
+    openButton.setAttribute("aria-expanded", "true");
+  };
+
+  const closeMenu = () => {
+    document.body.classList.remove("menu-open");
+    openButton.setAttribute("aria-expanded", "false");
+
+    setTimeout(() => {
+      if (!document.body.classList.contains("menu-open")) {
+        overlay.hidden = true;
+      }
+    }, 200);
+  };
+
+  openButton.addEventListener("click", openMenu);
+  closeButton?.addEventListener("click", closeMenu);
+  overlay.addEventListener("click", closeMenu);
+
+  navLinks.forEach((link) => {
+    link.addEventListener("click", closeMenu);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeMenu();
+    }
   });
 }
 

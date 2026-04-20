@@ -314,6 +314,45 @@ h1 {
     color: #6b7280;
 }
 
+.contact-field {
+    margin: -2px 0 16px 48px;
+    padding-left: 16px;
+    border-left: 3px solid #2563EB;
+}
+
+.contact-field--sms {
+    border-left-color: #10b981;
+}
+
+.contact-field[hidden] {
+    display: none;
+}
+
+.contact-field__label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.contact-field__input {
+    width: 100%;
+    height: 48px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: #ffffff;
+    color: #30323a;
+    font-size: 16px;
+    outline: none;
+    padding: 0 16px;
+}
+
+.contact-field__input:focus {
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+}
+
 /* PUNTICO BASE */
 .status-dot {
     width: 10px;
@@ -382,4 +421,181 @@ h1 {
     width: 16px;
     height: 16px;
     object-fit: contain;
+}
+
+.form-message {
+    min-height: 18px;
+    margin: 12px 0;
+    color: #10b981;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.form-message--error {
+    color: #ef4444;
+}
+
+.mobile-menu-button,
+.sidebar-close-button,
+.sidebar-overlay {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    body.menu-open {
+        overflow: hidden;
+    }
+
+    .sales-shell {
+        display: block;
+    }
+
+    .mobile-menu-button {
+        position: fixed;
+        top: 18px;
+        left: 18px;
+        z-index: 900;
+        width: 58px;
+        height: 58px;
+        border: 0;
+        border-radius: 12px;
+        background: #2d4d75;
+        display: grid;
+        place-items: center;
+        padding: 14px;
+    }
+
+    .mobile-menu-button span {
+        width: 22px;
+        height: 3px;
+        border-radius: 999px;
+        background: #ffffff;
+        display: block;
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 950;
+        display: block;
+        background: rgba(0, 0, 0, 0.42);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+    }
+
+    body.menu-open .sidebar-overlay {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .sidebar-overlay[hidden] {
+        display: none;
+    }
+
+    .sidebar {
+        position: fixed;
+        inset: 0 auto 0 0;
+        z-index: 1000;
+        width: min(405px, 86vw);
+        height: 100dvh;
+        min-height: 100vh;
+        padding: 34px 30px 28px;
+        overflow-y: auto;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+    }
+
+    body.menu-open .sidebar {
+        transform: translateX(0);
+    }
+
+    .brand {
+        margin: 0 0 42px;
+        gap: 14px;
+    }
+
+    .sidebar-close-button {
+        width: 42px;
+        height: 42px;
+        margin-left: auto;
+        border: 0;
+        background: transparent;
+        color: #ffffff;
+        display: grid;
+        place-items: center;
+        font-size: 40px;
+        line-height: 1;
+    }
+
+    .sidebar__nav {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .nav-item {
+        min-height: 74px;
+        padding: 12px 30px;
+        gap: 22px;
+        font-size: 22px;
+    }
+
+    .nav-item__icon {
+        width: 31px;
+        height: 31px;
+    }
+
+    .logout-button {
+        min-height: 78px;
+        margin-top: 32px;
+        flex-shrink: 0;
+        font-size: 21px;
+    }
+
+    .sales-content {
+        margin-left: 0;
+    }
+
+    .sales-inner {
+        max-width: none;
+        margin: 0;
+        padding: 96px 16px 32px;
+    }
+
+    .sale-card {
+        padding: 24px 18px 28px;
+    }
+
+    .contact-field {
+        margin-left: 20px;
+        padding-left: 14px;
+    }
+}
+
+@media (max-width: 520px) {
+    h1 {
+        font-size: 31px;
+    }
+
+    .sales-inner {
+        padding-top: 90px;
+    }
+
+    .checkbox-card {
+        padding: 14px;
+    }
+
+    .sale-card__title {
+        font-size: 18px;
+    }
+
+    .contact-field {
+        margin-left: 10px;
+    }
+
+    .contact-field__input {
+        height: 44px;
+        font-size: 15px;
+    }
 }
