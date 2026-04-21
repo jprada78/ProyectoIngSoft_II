@@ -37,10 +37,10 @@ app.get('/', (req, res) => {
 app.get('/test-db', async (req, res) => {
     try {
         await db.execute('SELECT 1');
-        res.send('BD conectada ✅');
+        res.send('BD conectada');
     } catch (err) {
         console.error(err);
-        res.status(500).send('Error en BD ❌');
+        res.status(500).send('Error en BD');
     }
 });
 
@@ -67,10 +67,10 @@ app.post('/register', async (req, res) => {
             [hashedPassword, pregunta, respuesta]
         );
 
-        res.send('Usuario registrado correctamente ✅');
+        res.send('Usuario registrado correctamente');
 
     } catch (err) {
-        console.error("🔥 ERROR REGISTER:", err);
+        console.error("ERROR REGISTER:", err);
         res.status(500).send(err.message);
     }
 });
@@ -99,7 +99,7 @@ app.post('/login', async (req, res) => {
             return res.status(401).send('Contraseña incorrecta');
         }
 
-        res.send('Login exitoso ✅');
+        res.send('Login exitoso');
 
     } catch (err) {
         console.error("ERROR LOGIN:", err);
@@ -168,7 +168,7 @@ app.post('/reset-password', async (req, res) => {
             [hashedPassword]
         );
 
-        res.send('Contraseña actualizada ✅');
+        res.send('Contraseña actualizada correctamente');
 
     } catch (err) {
         console.error(err);
