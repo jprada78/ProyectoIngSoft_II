@@ -1,8 +1,10 @@
+// Define la URL del backend dependiendo del entorno
 const API_BASE_URL =
   window.location.port === "5500" || window.location.port === "5501"
     ? "http://localhost:3000"
     : "";
 
+// Configuración general del módulo de corresponsal
 const CORRESPONSAL_CONFIG = {
   iconBasePath: "./icons/",
 
@@ -19,16 +21,18 @@ const CORRESPONSAL_CONFIG = {
     save: "Guardar.png",
   },
 
-  apiUrl: `${API_BASE_URL}/api/corresponsal`,
+  apiUrl: `${API_BASE_URL}/api/corresponsal`, // endpoint del backend
 };
 
+// Se ejecuta cuando carga el DOM
 document.addEventListener("DOMContentLoaded", () => {
   applyIcons();
   setupLogout();
   setupMobileMenu();
-  setupCorresponsalForm();
+  setupCorresponsalForm(); // formulario de transacciones
 });
 
+// ICONOS DINÁMICOS
 function applyIcons() {
   document.querySelectorAll(".js-icon").forEach((iconElement) => {
     const iconKey = iconElement.dataset.icon;
@@ -43,6 +47,7 @@ function applyIcons() {
   });
 }
 
+// FORMULARIO CORRESPONSAL
 function setupCorresponsalForm() {
   const form = document.getElementById("corresponsal-form");
   const message = document.getElementById("form-message");
@@ -53,6 +58,8 @@ function setupCorresponsalForm() {
     event.preventDefault();
 
     const submitButton = form.querySelector(".save-button");
+
+    // Obtiene datos del formulario
     const data = getCorresponsalData(form);
 
     if (!isValidData(data)) {
@@ -64,11 +71,14 @@ function setupCorresponsalForm() {
     showMessage(message, "Guardando transacción...", false);
 
     try {
+      // Envía datos al backend
       await saveData(data);
-      form.reset();
+      form.reset(); // limpia formulario
       showMessage(message, "", false);
-      showSuccessModal();
 
+      showSuccessModal(); // muestra modal de éxito
+
+      // Redirige al dashboard
       setTimeout(() => {
         window.location.href = "dashboard.html";
       }, 1300);
@@ -81,6 +91,7 @@ function setupCorresponsalForm() {
   });
 }
 
+// Obtiene datos del formulario
 function getCorresponsalData(form) {
   const formData = new FormData(form);
 
@@ -92,10 +103,12 @@ function getCorresponsalData(form) {
   };
 }
 
+// Valida datos antes de enviar
 function isValidData(data) {
   return data.transactionType && data.entity && data.amount > 0;
 }
 
+// PETICIÓN AL BACKEND
 async function saveData(data) {
   const response = await fetch(CORRESPONSAL_CONFIG.apiUrl, {
     method: "POST",
@@ -115,11 +128,13 @@ async function saveData(data) {
   return result;
 }
 
+// MENSAJES Y UI
 function showMessage(messageElement, text, isError) {
   if (!messageElement) return;
 
   messageElement.textContent = text;
-  messageElement.classList.toggle("form-message--error", isError);
+  messageElement.classList.toggle
+  ("form-message--error", isError); // Cambia estilo si es error
 }
 
 function showSuccessModal() {
@@ -129,20 +144,25 @@ function showSuccessModal() {
   modal.hidden = false;
 }
 
+// LOGOUT
 function setupLogout() {
   const logoutButton = document.querySelector(".logout-button");
 
   if (!logoutButton) return;
 
   logoutButton.addEventListener("click", () => {
+
+    // Limpia datos de sesión
     localStorage.removeItem("smartcontrol_user");
     localStorage.removeItem("smartcontrol_token");
     sessionStorage.clear();
 
+    // Redirige al login
     window.location.href = "index.html";
   });
 }
 
+// MENÚ RESPONSIVE
 function setupMobileMenu() {
   const openButton = document.querySelector(".mobile-menu-button");
   const closeButton = document.querySelector(".sidebar-close-button");
@@ -151,12 +171,14 @@ function setupMobileMenu() {
 
   if (!openButton || !overlay) return;
 
+  // Abre menú lateral
   const openMenu = () => {
     document.body.classList.add("menu-open");
     overlay.hidden = false;
     openButton.setAttribute("aria-expanded", "true");
   };
 
+  // Cierra menú
   const closeMenu = () => {
     document.body.classList.remove("menu-open");
     openButton.setAttribute("aria-expanded", "false");
@@ -172,6 +194,7 @@ function setupMobileMenu() {
   closeButton?.addEventListener("click", closeMenu);
   overlay.addEventListener("click", closeMenu);
 
+  // Cierra menú al seleccionar opción
   navLinks.forEach((link) => {
     link.addEventListener("click", closeMenu);
   });

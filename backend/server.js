@@ -1,7 +1,9 @@
+//Carga variables de entorno desde el archivo .env
 require('dotenv').config();
 
 console.log("ESTE ES MI SERVER CORRECTO");
 
+//Importación de módulos necesarios
 const path = require('path');
 const mysql = require('mysql2');
 const express = require('express');
@@ -10,11 +12,12 @@ const bcrypt = require('bcryptjs');
 
 const app = express();
 
-app.use(cors());
-app.use(express.json());
-app.use(express.static(path.join(__dirname, '../frontend')));
+//Middlewares (facilitadores o puentes) básicos
+app.use(cors()); // Permite peticiones desde otros orígenes
+app.use(express.json()); //Permite recibir JSON
+app.use(express.static(path.join(__dirname, '../frontend'))); //Sirve archivos del frontend
 
-// CONEXIÓN MYSQL
+// CONEXIÓN MYSQL (pool de conexiones para manejar múltiples solicitudes)
 const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -26,17 +29,17 @@ const db = mysql.createPool({
 }).promise();
 
 
-// Abrir en Fronted
+// Ruta principal para abrir en Frontend
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
 
 
-// TEST DB
+// Endpoint para probar conexión a la BD
 app.get('/test-db', async (req, res) => {
     try {
-        await db.execute('SELECT 1');
+        await db.execute('SELECT 1'); //Query de prueba
         res.send('BD conectada');
     } catch (err) {
         console.error(err);
@@ -45,11 +48,13 @@ app.get('/test-db', async (req, res) => {
 });
 
 
-// REGISTRO
+// REGISTRO DE USUARIO
 app.post('/register', async (req, res) => {
     try {
+        //Capturación datos del front
         const { password, pregunta, respuesta } = req.body;
 
+        //Validación campos obligatorios
         if (!password || !pregunta || !respuesta) {
             return res.status(400).send('Todos los campos son obligatorios');
         }
@@ -60,8 +65,10 @@ app.post('/register', async (req, res) => {
             return res.status(400).send('Ya existe un usuario registrado');
         }
 
+        //Encripta la contraseña
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Guarda el usuario en la BD
         await db.execute(
             `INSERT INTO usuarios (password, pregunta, respuesta) VALUES (?, ?, ?)`,
             [hashedPassword, pregunta, respuesta]
@@ -76,15 +83,18 @@ app.post('/register', async (req, res) => {
 });
 
 
-// LOGIN
+// LOGIN DE USUARIO
 app.post('/login', async (req, res) => {
     try {
+        //Recibe la contraseña del backend
         const { password } = req.body;
 
+        //Validación básica
         if (!password) {
             return res.status(400).send('Ingrese la contraseña');
         }
 
+        //Obtiene el resultado
         const [results] = await db.execute('SELECT * FROM usuarios LIMIT 1');
 
         if (results.length === 0) {
@@ -93,6 +103,7 @@ app.post('/login', async (req, res) => {
 
         const user = results[0];
 
+        //Compara la contraseña ingresada con la almacenada (encriptada)
         const match = await bcrypt.compare(password, user.password);
 
         if (!match) {
@@ -108,7 +119,7 @@ app.post('/login', async (req, res) => {
 });
 
 
-// PREGUNTA
+// OBTENER PREGUNTA DE SEGURIDAD
 app.get('/pregunta', async (req, res) => {
     try {
         const [results] = await db.execute('SELECT pregunta FROM usuarios LIMIT 1');
@@ -126,7 +137,7 @@ app.get('/pregunta', async (req, res) => {
 });
 
 
-// VERIFICAR RESPUESTA
+// VERIFICAR RESPUESTA DE SEGURIDAD
 app.post('/verificar-respuesta', async (req, res) => {
     try {
         const { respuesta } = req.body;
@@ -139,6 +150,7 @@ app.post('/verificar-respuesta', async (req, res) => {
 
         const user = results[0];
 
+        //Compara respuesta ignorando mayúsculas/minúsculas
         if (user.respuesta.trim().toLowerCase() !== respuesta.trim().toLowerCase()) {
             return res.status(401).send('Respuesta incorrecta');
         }
@@ -152,7 +164,7 @@ app.post('/verificar-respuesta', async (req, res) => {
 });
 
 
-// RESET PASSWORD
+// RESET DE CONTRASEÑA
 app.post('/reset-password', async (req, res) => {
     try {
         const { nuevaPassword } = req.body;
@@ -161,8 +173,10 @@ app.post('/reset-password', async (req, res) => {
             return res.status(400).send('Ingrese la nueva contraseña');
         }
 
+        //Encripta la contraseña nueva
         const hashedPassword = await bcrypt.hash(nuevaPassword, 10);
 
+        //Actualiza en BD
         await db.execute(
             'UPDATE usuarios SET password = ? LIMIT 1',
             [hashedPassword]
@@ -177,7 +191,7 @@ app.post('/reset-password', async (req, res) => {
 });
 
 
-// EXISTE USUARIO
+// VERIFICA SI YA EXISTE USUARIO
 app.get('/existe-usuario', async (req, res) => {
     try {
         const [results] = await db.execute('SELECT * FROM usuarios LIMIT 1');
@@ -190,6 +204,7 @@ app.get('/existe-usuario', async (req, res) => {
     }
 });
 
+//Genera fecha y hora en zona Bogotá para registrar en la BD
 function getBogotaDateTime() {
     const parts = new Intl.DateTimeFormat('en-CA', {
         timeZone: 'America/Bogota',
@@ -207,6 +222,7 @@ function getBogotaDateTime() {
     return `${values.year}-${values.month}-${values.day} ${values.hour}:${values.minute}:${values.second}`;
 }
 
+//Obtiene solo año, mes y día en zona Bogotá
 function getBogotaDateParts() {
     const parts = new Intl.DateTimeFormat('en-CA', {
         timeZone: 'America/Bogota',
@@ -224,6 +240,7 @@ function getBogotaDateParts() {
     };
 }
 
+// Función para obtener rangos de fechas para el dashboard
 function getDashboardRanges() {
     const { year, month, day } = getBogotaDateParts();
 
@@ -231,10 +248,12 @@ function getDashboardRanges() {
     const tomorrowDate = new Date(currentDate);
     tomorrowDate.setDate(currentDate.getDate() + 1);
 
+    //Calcula siguiente día
     const nextDayYear = tomorrowDate.getFullYear();
     const nextDayMonth = String(tomorrowDate.getMonth() + 1).padStart(2, '0');
     const nextDay = String(tomorrowDate.getDate()).padStart(2, '0');
 
+    //Calcula inicio del siguiente mes
     const nextMonthStart =
         month === '12'
             ? `${Number(year) + 1}-01-01 00:00:00`
@@ -248,7 +267,7 @@ function getDashboardRanges() {
     };
 }
 
-// REGISTRAR VENTA
+// REGISTRAR VENTA (Guarda ventas en la BD)
 app.post('/api/sales', async (req, res) => {
     try {
         const {
@@ -260,18 +279,21 @@ app.post('/api/sales', async (req, res) => {
             paymentMethod
         } = req.body;
 
+        //Validación básica de campos obligatorios
         if (!saleType || !description || !amount || !paymentMethod) {
             return res.status(400).json({
                 message: 'Tipo de venta, descripción, monto y medio de pago son obligatorios',
             });
         }
 
+        //Conversión a números
         const numericAmount = Number(amount);
         const numericQuantity =
             quantity === null || quantity === undefined || quantity === ''
                 ? null
                 : Number(quantity);
 
+        //Validación de montos y cantidades
         if (Number.isNaN(numericAmount) || numericAmount <= 0) {
             return res.status(400).json({
                 message: 'El monto debe ser mayor a 0',
@@ -287,8 +309,10 @@ app.post('/api/sales', async (req, res) => {
             });
         }
 
+        //Fecha actual
         const createdAt = getBogotaDateTime();
 
+        //Inserta en tabla ventas
         const [result] = await db.execute(
             `INSERT INTO ventas 
              (producto, tipo_venta, descripcion, cantidad, monto, medio_pago, created_at)
@@ -304,6 +328,7 @@ app.post('/api/sales', async (req, res) => {
             ]
         );
 
+        //Back responde al front
         res.status(201).json({
             message: 'Venta registrada correctamente',
             id: result.insertId,
@@ -326,6 +351,7 @@ app.post('/api/expenses', async (req, res) => {
             amount
         } = req.body;
 
+        //Validación básica
         if (!description || !category || !amount) {
             return res.status(400).json({
                 message: 'Descripción, categoría y monto son obligatorios',
@@ -335,12 +361,14 @@ app.post('/api/expenses', async (req, res) => {
         const normalizedCategory = category.trim().toLowerCase();
         const isInventoryExpense = normalizedCategory === 'inventario';
 
+        //Conversión a números
         const numericAmount = Number(amount);
         const numericQuantity =
             quantity === null || quantity === undefined || quantity === ''
                 ? null
                 : Number(quantity);
 
+        //Validación de montos y cantidades
         if (Number.isNaN(numericAmount) || numericAmount <= 0) {
             return res.status(400).json({
                 message: 'El monto debe ser mayor a 0',
@@ -362,6 +390,7 @@ app.post('/api/expenses', async (req, res) => {
             });
         }
 
+        //Si es inventario, calcula total = cantidad * valor unitario
         const unitAmount = isInventoryExpense ? numericAmount : null;
         const totalAmount = isInventoryExpense
             ? numericAmount * numericQuantity
@@ -370,6 +399,7 @@ app.post('/api/expenses', async (req, res) => {
         const finalQuantity = isInventoryExpense ? numericQuantity : null;
         const createdAt = getBogotaDateTime();
 
+        // Inserta gasto en BD
         const [result] = await db.execute(
             `INSERT INTO gastos 
              (producto, descripcion, categoria, cantidad, valor_unitario, monto, created_at)
@@ -435,6 +465,7 @@ app.post('/api/corresponsal', async (req, res) => {
 
         const createdAt = getBogotaDateTime();
 
+        // Inserta transacción en BD
         const [result] = await db.execute(
             `INSERT INTO corresponsal 
             (tipo_transaccion, entidad, monto, comision_ganada, created_at)
@@ -476,6 +507,7 @@ app.get('/api/products', async (req, res) => {
              ORDER BY created_at DESC`
         );
 
+        // Formatea datos antes de enviarlos
         res.json(
             rows.map(row => ({
                 id: row.id,
@@ -513,6 +545,7 @@ app.post('/api/products', async (req, res) => {
             });
         }
 
+        // Conversión a números
         const numericSalePrice = Number(salePrice);
         const numericCost = Number(cost);
         const numericStock = Number(stock);
@@ -534,6 +567,7 @@ app.post('/api/products', async (req, res) => {
             return res.status(400).json({ message: 'El stock mínimo debe ser un entero mayor o igual a 0' });
         }
 
+        // Verifica que no exista el producto
         const [existing] = await db.execute(
             'SELECT id FROM inventario WHERE id = ? LIMIT 1',
             [id]
@@ -544,7 +578,8 @@ app.post('/api/products', async (req, res) => {
                 message: 'Ya existe un producto con ese ID',
             });
         }
-
+    
+        //Inserta producto en BD
         const createdAt = getBogotaDateTime();
 
         await db.execute(
@@ -613,6 +648,7 @@ app.put('/api/products', async (req, res) => {
             return res.status(400).json({ message: 'El stock mínimo debe ser un entero mayor o igual a 0' });
         }
 
+        //Actualiza producto en BD
         const [result] = await db.execute(
             `UPDATE inventario
              SET nombre = ?, categoria = ?, precio_venta = ?, costo = ?, stock = ?, stock_minimo = ?
@@ -628,6 +664,7 @@ app.put('/api/products', async (req, res) => {
             ]
         );
 
+        //Si no se encuentra
         if (result.affectedRows === 0) {
             return res.status(404).json({
                 message: 'Producto no encontrado',
@@ -649,6 +686,7 @@ app.delete('/api/products/:id', async (req, res) => {
     try {
         const { id } = req.params;
 
+        //Eliminar producto por ID
         const [result] = await db.execute(
             'DELETE FROM inventario WHERE id = ?',
             [id]
@@ -676,7 +714,7 @@ app.get('/api/dashboard/summary', async (req, res) => {
     try {
         const { todayStart, tomorrowStart, monthStart, nextMonthStart } = getDashboardRanges();
 
-        // Ventas del día
+        // Consulta ventas del día
         const [[salesDayRow]] = await db.execute(
             `SELECT COALESCE(SUM(monto), 0) AS total
              FROM ventas
@@ -684,7 +722,7 @@ app.get('/api/dashboard/summary', async (req, res) => {
             [todayStart, tomorrowStart]
         );
 
-        // Comisión corresponsal del día
+        // Consulta comisión corresponsal del día
         const [[commissionDayRow]] = await db.execute(
             `SELECT COALESCE(SUM(comision_ganada), 0) AS total
              FROM corresponsal
@@ -692,7 +730,7 @@ app.get('/api/dashboard/summary', async (req, res) => {
             [todayStart, tomorrowStart]
         );
 
-        // Gastos del día
+        // Consulta gastos del día
         const [[expensesDayRow]] = await db.execute(
             `SELECT COALESCE(SUM(monto), 0) AS total
              FROM gastos
@@ -700,7 +738,7 @@ app.get('/api/dashboard/summary', async (req, res) => {
             [todayStart, tomorrowStart]
         );
 
-        // Ventas del mes
+        // Consulta ventas del mes
         const [[monthSalesRow]] = await db.execute(
             `SELECT COALESCE(SUM(monto), 0) AS total
              FROM ventas
@@ -708,7 +746,7 @@ app.get('/api/dashboard/summary', async (req, res) => {
             [monthStart, nextMonthStart]
         );
 
-        // Comisión corresponsal del mes
+        // Consulta Comisión corresponsal del mes
         const [[monthCommissionRow]] = await db.execute(
             `SELECT COALESCE(SUM(comision_ganada), 0) AS total
              FROM corresponsal
@@ -750,6 +788,7 @@ app.get('/api/dashboard/summary', async (req, res) => {
             [monthStart, nextMonthStart]
         );
 
+        //Convierte a números
         const salesDay = Number(salesDayRow.total);
         const commissionDay = Number(commissionDayRow.total);
         const expensesDay = Number(expensesDayRow.total);
@@ -758,6 +797,7 @@ app.get('/api/dashboard/summary', async (req, res) => {
         const monthCommission = Number(monthCommissionRow.total);
         const monthExpenses = Number(monthExpensesRow.total);
 
+        //Calcula totales e ingresos netos
         const dayIncome = salesDay + commissionDay;
         const monthIncome = monthSales + monthCommission;
         const netProfit = monthIncome - monthExpenses;
@@ -790,7 +830,7 @@ app.get('/api/dashboard/summary', async (req, res) => {
     }
 });
 
-// SERVIDOR
+// Inicia SERVIDOR
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

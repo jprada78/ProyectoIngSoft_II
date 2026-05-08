@@ -1,8 +1,10 @@
+// Define la URL base del backend según si está en local o producción
 const API_BASE_URL =
   window.location.port === "5500" || window.location.port === "5501"
     ? "http://localhost:3000"
     : "";
 
+// Configuración general del módulo de inventario (iconos y endpoint)
 const INVENTORY_CONFIG = {
   iconBasePath: "./icons/",
   icons: {
@@ -16,17 +18,19 @@ const INVENTORY_CONFIG = {
     notifications: "notificacion2.png",
     logout: "cerrar-sesion.png",
   },
-  apiUrl: `${API_BASE_URL}/api/products`,
+  apiUrl: `${API_BASE_URL}/api/products`, // Endpoint del backend para productos
 };
 
+// Inicializa todo cuando carga el DOM
 document.addEventListener("DOMContentLoaded", () => {
   applyIcons();
   setupLogout();
   setupMobileMenu();
-  setupFilters();
-  renderInventory();
+  setupFilters(); // Filtros de búsqueda
+  renderInventory(); // Carga inventario en pantalla
 });
 
+// Asigna los iconos según el atributo data-icon
 function applyIcons() {
   document.querySelectorAll(".js-icon").forEach((iconElement) => {
     const iconKey = iconElement.dataset.icon;
@@ -41,14 +45,17 @@ function applyIcons() {
   });
 }
 
+// Configura los filtros de búsqueda y categoría
 function setupFilters() {
   const searchInput = document.getElementById("search-product");
   const categoryFilter = document.getElementById("category-filter");
 
+  // Cada vez que el usuario escribe o cambia filtro, se vuelve a renderizar
   searchInput?.addEventListener("input", renderInventory);
   categoryFilter?.addEventListener("change", renderInventory);
 }
 
+// Función principal que carga y filtra el inventario
 async function renderInventory() {
   const searchValue = String(document.getElementById("search-product")?.value || "")
     .trim()
@@ -58,6 +65,7 @@ async function renderInventory() {
   try {
     const allProducts = await fetchProducts();
 
+    // Filtra por búsqueda y categoría
     const filteredProducts = allProducts.filter((product) => {
       const matchesSearch =
         !searchValue ||
@@ -70,7 +78,7 @@ async function renderInventory() {
     });
 
     renderTable(filteredProducts, allProducts.length);
-    renderStats(allProducts);
+    renderStats(allProducts); // Calcula estadísticas
   } catch (error) {
     console.error("ERROR CARGAR INVENTARIO:", error);
     renderTable([], 0);
@@ -78,6 +86,7 @@ async function renderInventory() {
   }
 }
 
+// Hace petición GET al backend para obtener productos
 async function fetchProducts() {
   const response = await fetch(INVENTORY_CONFIG.apiUrl, {
     method: "GET",
@@ -95,6 +104,7 @@ async function fetchProducts() {
   return Array.isArray(data) ? data : [];
 }
 
+// Renderiza la tabla del inventario
 function renderTable(products, totalProducts = 0) {
   const tableBody = document.getElementById("inventory-body");
   const emptyState = document.getElementById("empty-state");
@@ -102,6 +112,7 @@ function renderTable(products, totalProducts = 0) {
 
   if (!tableBody || !emptyState || !emptyStateText) return;
 
+  // Si no hay productos, muestra mensaje
   if (products.length === 0) {
     tableBody.innerHTML = "";
     emptyState.hidden = false;
@@ -113,14 +124,18 @@ function renderTable(products, totalProducts = 0) {
   }
 
   emptyState.hidden = true;
+
+  // Genera las filas de la tabla
   tableBody.innerHTML = products.map(createRowMarkup).join("");
 
+  // Evento para eliminar producto
   tableBody.querySelectorAll("[data-action='delete']").forEach((button) => {
     button.addEventListener("click", async () => {
       await deleteProduct(button.dataset.id);
     });
   });
 
+  // Evento para editar producto
   tableBody.querySelectorAll("[data-action='edit']").forEach((button) => {
     button.addEventListener("click", () => {
       window.location.href = `agregarProd.html?id=${encodeURIComponent(button.dataset.id)}`;
@@ -128,6 +143,7 @@ function renderTable(products, totalProducts = 0) {
   });
 }
 
+// Crea el HTML de cada fila de la tabla
 function createRowMarkup(product) {
   const stock = Number(product.stock);
   const minStock = Number(product.minStock);
@@ -163,6 +179,7 @@ function createRowMarkup(product) {
   `;
 }
 
+// Calcula estadísticas generales del inventario
 function renderStats(products) {
   const totals = products.reduce(
     (accumulator, product) => {
@@ -180,6 +197,7 @@ function renderStats(products) {
   setText("stock-out", totals.out);
 }
 
+// Elimina producto en backend
 async function deleteProduct(productId) {
   try {
     const response = await fetch(`${INVENTORY_CONFIG.apiUrl}/${encodeURIComponent(productId)}`, {
@@ -195,12 +213,13 @@ async function deleteProduct(productId) {
       throw new Error(data.message || "No se pudo eliminar el producto");
     }
 
-    await renderInventory();
+    await renderInventory(); // Recarga inventario
   } catch (error) {
     console.error("ERROR ELIMINAR PRODUCTO:", error);
   }
 }
 
+// Determina estado del stock
 function getStockStatus(stock, minStock) {
   if (stock <= 0) {
     return { key: "out", label: "Agotado", className: "status-badge--out" };
@@ -213,6 +232,7 @@ function getStockStatus(stock, minStock) {
   return { key: "normal", label: "Normal", className: "status-badge--normal" };
 }
 
+// Formatea valores a moneda colombiana
 function formatCurrency(value) {
   return new Intl.NumberFormat("es-CO", {
     style: "currency",
@@ -221,12 +241,14 @@ function formatCurrency(value) {
   }).format(Number(value) || 0);
 }
 
+// Divide el ID en dos líneas para visual
 function formatIdForCell(id) {
   const [prefix, numeric] = String(id).split("-");
   if (!prefix || !numeric) return escapeHtml(String(id));
   return `${escapeHtml(prefix)}-\n${escapeHtml(numeric)}`;
 }
 
+// Asigna texto a un elemento
 function setText(id, value) {
   const element = document.getElementById(id);
   if (element) {
@@ -234,6 +256,7 @@ function setText(id, value) {
   }
 }
 
+// Evita inyección HTML
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -243,10 +266,12 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
+// Escapa atributos HTML
 function escapeAttribute(value) {
   return escapeHtml(value);
 }
 
+// Maneja cierre de sesión
 function setupLogout() {
   const logoutButton = document.querySelector(".logout-button");
 

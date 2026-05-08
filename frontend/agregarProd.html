@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="css/agregarProd.css">
 </head>
 <body>
+
+  <!-- Botón para abrir menú en móvil -->
   <button class="mobile-menu-button" type="button" aria-label="Abrir menú" aria-expanded="false">
     <span></span>
     <span></span>
@@ -56,14 +58,17 @@
         </a>
       </nav>
 
+      <!-- Botón cerrar sesión -->
       <button class="logout-button" type="button">
         <img class="logout-button__icon js-icon" data-icon="logout" src="" alt="">
         <span>Cerrar Sesión</span>
       </button>
     </aside>
 
+    <!-- CONTENIDO PRINCIPAL -->
     <section class="product-content">
       <div class="product-inner">
+
         <header class="page-header">
           <div>
             <h1>Inventario</h1>
@@ -73,6 +78,7 @@
           <a class="back-link" href="inventario.html">Volver al inventario</a>
         </header>
 
+        <!-- FORMULARIO PARA CREAR / EDITAR PRODUCTO -->
         <form class="product-card" id="product-form" autocomplete="off">
           <h2 id="form-title">Nuevo Producto</h2>
 

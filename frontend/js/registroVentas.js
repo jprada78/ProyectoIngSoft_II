@@ -1,12 +1,14 @@
+// CONFIGURACIÓN BASE DEL API
 const API_BASE_URL =
   window.location.port === "5500" || window.location.port === "5501"
     ? "http://localhost:3000"
     : "";
+
+// CONFIGURACIÓN DEL MÓDULO DE VENTAS
 const SALE_CONFIG = {
 
   iconBasePath: "./icons/",
 
-  // Cambia aqui los nombres por los archivos reales que tienes.
   icons: {
     logo: "logo.png",
     dashboard: "dashboard2.png",
@@ -21,10 +23,11 @@ const SALE_CONFIG = {
     save: "Guardar.png",
   },
 
-  // Cuando tengas Node + Express + MySQL, crea este endpoint para guardar ventas.
+  // Endpoint del backend para guardar ventas
   apiUrl: `${API_BASE_URL}/api/sales`,
 };
 
+// INICIALIZACIÓN DEL SISTEMA
 document.addEventListener("DOMContentLoaded", () => {
   applyIcons();
   setupLogout();
@@ -32,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupSaleForm();
 });
 
-
+// CARGA DINÁMICA DE ÍCONOS
 function applyIcons() {
   document.querySelectorAll(".js-icon").forEach((iconElement) => {
     const iconKey = iconElement.dataset.icon;
@@ -47,14 +50,18 @@ function applyIcons() {
   });
 }
 
+// CONFIGURACIÓN DEL FORMULARIO
 function setupSaleForm() {
   const form = document.getElementById("sale-form");
   const message = document.getElementById("form-message");
 
+  // Evento al enviar el formulario
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const submitButton = form.querySelector(".save-button");
+
+    // Obtiene los datos del formulario
     const sale = getSaleData(form);
 
     if (!isValidSale(sale)) {
@@ -62,11 +69,15 @@ function setupSaleForm() {
       return;
     }
 
+    // Bloquea el botón para evitar doble envío
     submitButton.disabled = true;
     showMessage(message, "Guardando venta...", false);
 
     try {
+      // Envía la venta al backend
       await saveSale(sale);
+
+      //Limpia el formulario
       form.reset();
       showSuccessModal();
 
@@ -81,8 +92,11 @@ function setupSaleForm() {
   });
 }
 
+// OBTENER DATOS DEL FORMULARIO
 function getSaleData(form) {
   const formData = new FormData(form);
+
+  // Obtiene la cantidad como string
   const quantityValue = String(formData.get("quantity") || "").trim();
 
   return {
@@ -96,14 +110,17 @@ function getSaleData(form) {
   };
 }
 
-
+// VALIDACIÓN DE DATOS
 function isValidSale(sale) {
+
+  // Validación de campos obligatorios
   const hasValidRequiredFields =
     sale.saleType &&
     sale.description &&
     sale.amount > 0 &&
     sale.paymentMethod;
 
+    // Validación de cantidad
   const hasValidQuantity =
     sale.quantity === null ||
     (Number.isInteger(sale.quantity) && sale.quantity > 0);
@@ -111,7 +128,7 @@ function isValidSale(sale) {
   return hasValidRequiredFields && hasValidQuantity;
 }
 
-
+// ENVÍO AL BACKEND
 async function saveSale(sale) {
   const response = await fetch(SALE_CONFIG.apiUrl, {
     method: "POST",

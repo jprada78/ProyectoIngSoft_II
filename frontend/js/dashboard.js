@@ -1,8 +1,10 @@
+// Define la URL del backend según el entorno
 const API_BASE_URL =
     window.location.port === "5500" || window.location.port === "5501"
         ? "http://localhost:3000"
         : "";
 
+// Configuración del dashboard
 const DASHBOARD_CONFIG = {
     iconBasePath: "./icons/",
 
@@ -25,11 +27,12 @@ const DASHBOARD_CONFIG = {
         trend: "flecha.png",
     },
 
-    // Este endpoint puede devolver el mismo formato.
+    // Endpoint que trae resumen del backend
     apiUrl: `${API_BASE_URL}/api/dashboard/summary`,
 
 };
 
+// Datos por defecto (si falla backend)
 const fallbackData = {
     alert: {
         count: 0,
@@ -45,6 +48,7 @@ const fallbackData = {
     salesByType: [],
 };
 
+// Formateador de moneda colombiana
 const currencyFormatter = new Intl.NumberFormat("es-CO", {
     style: "currency",
     currency: "COP",
@@ -52,18 +56,25 @@ const currencyFormatter = new Intl.NumberFormat("es-CO", {
     maximumFractionDigits: 0,
 });
 
+// Guarda los datos actuales del dashboard
 let currentDashboardData = fallbackData;
 
+// Se ejecuta al cargar la página
 document.addEventListener("DOMContentLoaded", async () => {
     applyIcons();
     setupLogout();
     setupMobileMenu();
-    renderDashboard(fallbackData);
 
+    renderDashboard(fallbackData); // muestra datos vacíos inicialmente
+
+    // Carga datos reales desde backend
     const dashboardData = await loadDashboardData();
+
+    // Renderiza datos reales
     renderDashboard(dashboardData);
 });
 
+// ICONOS
 function applyIcons() {
     document.querySelectorAll(".js-icon").forEach((iconElement) => {
         const iconKey = iconElement.dataset.icon;
@@ -78,6 +89,7 @@ function applyIcons() {
     });
 }
 
+// CARGAR DATOS BACKEND
 async function loadDashboardData() {
     try {
         const response = await fetch(DASHBOARD_CONFIG.apiUrl, {
@@ -92,15 +104,19 @@ async function loadDashboardData() {
 
         return await response.json();
     } catch (error) {
+        // Si falla, usa datos por defecto
         return fallbackData;
     }
 }
 
+// RENDER PRINCIPAL
 function renderDashboard(data) {
     currentDashboardData = data;
 
+    // Renderiza alerta de stock
     renderStockAlert(data.alert);
 
+    // Renderiza tarjetas principales
     document.getElementById("sales-day").textContent = formatMoney(data.cards.salesDay);
     document.getElementById("expenses-day").textContent = formatMoney(data.cards.expensesDay);
     document.getElementById("net-profit").textContent = formatMoney(data.cards.netProfit);
@@ -111,9 +127,11 @@ function renderDashboard(data) {
     drawSalesByTypeChart(data.salesByType);
 }
 
+// ALERTA DE STOCK
 function renderStockAlert(alert) {
     const stockAlert = document.getElementById("stock-alert");
 
+    // Si no hay alertas, se oculta
     if (!alert || alert.count <= 0) {
         stockAlert.hidden = true;
         return;
@@ -124,25 +142,32 @@ function renderStockAlert(alert) {
     document.getElementById("alert-product").textContent = alert.product;
 }
 
+// ESTADO DEL DASHBOARD
 function renderDashboardState(data) {
+
+    // Verifica si hay datos
     const hasSales =
         data.cards.monthTotal > 0 ||
         data.topProducts.length > 0 ||
         data.salesByType.length > 0;
 
+    // Muestra u oculta secciones
     document.querySelector(".top-products").hidden = !hasSales;
     document.querySelector(".chart-panel").hidden = !hasSales;
     document.getElementById("empty-dashboard").hidden = hasSales;
 }
 
+// TOP PRODUCTOS
 function renderTopProducts(products) {
     const list = document.getElementById("top-products-list");
     list.innerHTML = "";
 
+    // Muestra máximo 5 productos
     products.slice(0, 5).forEach((product, index) => {
         const row = document.createElement("article");
         row.className = "product-row";
 
+        // Inserta datos dinámicamente
         row.innerHTML = `
       <span class="product-rank">${index + 1}</span>
       <div>
@@ -159,10 +184,12 @@ function renderTopProducts(products) {
     });
 }
 
+// GRÁFICA DE VENTAS
 function drawSalesByTypeChart(items) {
     const canvas = document.getElementById("sales-type-chart");
     const context = canvas.getContext("2d");
 
+    // Ajusta resolución del canvas
     const dpr = window.devicePixelRatio || 1;
     const cssWidth = canvas.clientWidth || 600;
     const cssHeight = canvas.clientHeight || 320;
@@ -174,6 +201,7 @@ function drawSalesByTypeChart(items) {
 
     if (!items || items.length === 0) return;
 
+    // Configuración de márgenes
     const padding = {
         top: 22,
         right: 24,
@@ -183,6 +211,8 @@ function drawSalesByTypeChart(items) {
 
     const chartWidth = cssWidth - padding.left - padding.right;
     const chartHeight = cssHeight - padding.top - padding.bottom;
+
+    // Valor máximo
     const rawMaxValue = Math.max(...items.map((item) => Number(item.value) || 0));
     const maxValue = getNiceMaxValue(rawMaxValue);
     const ticks = getChartTicks(maxValue, 5);
@@ -217,6 +247,7 @@ function drawSalesByTypeChart(items) {
     const slotWidth = barArea / items.length;
     const barWidth = Math.min(260, Math.max(48, slotWidth * 0.62));
 
+    // Dibuja barras
     items.forEach((item, index) => {
         const value = Number(item.value) || 0;
         const x = padding.left + gap + slotWidth * index + (slotWidth - barWidth) / 2;
@@ -233,6 +264,8 @@ function drawSalesByTypeChart(items) {
     });
 }
 
+// UTILIDADES
+// Ajusta valores para gráfica
 function getNiceMaxValue(value) {
     if (value <= 0) return 1000;
 
@@ -297,10 +330,12 @@ function roundRect(context, x, y, width, height, radius, color) {
     context.fill();
 }
 
+// Formatea dinero
 function formatMoney(value) {
     return currencyFormatter.format(value).replace("COP", "$").trim();
 }
 
+// Evita inyección HTML
 function escapeHtml(value) {
     return String(value)
         .replaceAll("&", "&amp;")
@@ -310,10 +345,12 @@ function escapeHtml(value) {
         .replaceAll("'", "&#039;");
 }
 
+// Redibuja gráfica al cambiar tamaño
 window.addEventListener("resize", () => {
     drawSalesByTypeChart(currentDashboardData.salesByType);
 });
 
+// LOGOUT
 function setupLogout() {
     const logoutButton = document.querySelector(".logout-button");
 
@@ -328,6 +365,7 @@ function setupLogout() {
     });
 }
 
+// MENÚ RESPONSIVE
 function setupMobileMenu() {
     const openButton = document.querySelector(".mobile-menu-button");
     const closeButton = document.querySelector(".sidebar-close-button");

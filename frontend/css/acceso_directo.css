@@ -1,22 +1,26 @@
+/* Variables globales del sistema (colores, tamaños, etc.) */
 :root {
-    --sidebar-width: 300px;
-    --sidebar-bg: #1E3A5F;
-    --page-bg: #F0F5FA;
-    --text-main: #1E3A5F;
-    --text-dark: #202124;
-    --card-bg: #ffffff;
-    --shadow: 0 3px 4px rgba(38, 58, 89, 0.26);
-    --radius: 12px;
+    --sidebar-width: 300px; /* ancho del menú lateral */
+    --sidebar-bg: #1E3A5F; /* color fondo sidebar */
+    --page-bg: #F0F5FA; /* fondo general */
+    --text-main: #1E3A5F; /* color principal de texto */
+    --text-dark: #202124; /* color texto oscuro */
+    --card-bg: #ffffff; /* fondo de tarjetas */
+    --shadow: 0 3px 4px rgba(38, 58, 89, 0.26); /* sombra base */
+    --radius: 12px; /* bordes redondeados */
 
+    /* Tamaños de íconos */
     --brand-icon-size: 50px;
     --sidebar-icon-size: 30px;
     --logout-icon-size: 32px;
 }
 
+/* Evita problemas de tamaños con padding y border */
 * {
     box-sizing: border-box;
 }
 
+/* Configuración base del documento */
 html,
 body {
     min-height: 100%;
@@ -24,6 +28,7 @@ body {
     overflow-x: hidden;
 }
 
+/* Estilos base para el cuerpo del documento */
 body {
     margin: 0;
     background: var(--page-bg);
@@ -37,6 +42,7 @@ body {
     background: var(--page-bg);
 }
 
+/* Sidebar fijo a la izquierda */
 .sidebar {
     position: fixed;
     inset: 0 auto 0 0;
@@ -48,6 +54,7 @@ body {
     padding: 32px 30px 20px;
 }
 
+/*Contenedor del logo*/
 .brand {
     display: flex;
     align-items: center;
@@ -73,6 +80,7 @@ body {
     gap: 18px;
 }
 
+/*Items del menú*/
 .nav-item {
     min-height: 31px;
     display: flex;
@@ -146,7 +154,7 @@ body {
     padding: 35px 24px 80px;
 }
 
-
+/*Títulos principales*/
 h1 {
     margin: 0 0 28px;
     color: var(--text-main);
@@ -155,13 +163,13 @@ h1 {
     line-height: 1.1;
 }
 
-
 .access-grid,
 .dashboard-inner .row {
     width: 100%;
     margin: 6px 0 0;
 }
 
+/*Espaciado entre columnas*/
 .dashboard-inner .row>[class*="col-"] {
     padding-left: 10px;
     padding-right: 10px;
@@ -177,7 +185,6 @@ h1 {
     color: var(--text-dark);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
 
 .dashboard-inner .card:hover {
     transform: translateY(-4px);
@@ -197,6 +204,7 @@ h1 {
     font-weight: 800;
 }
 
+
 .dashboard-inner .card h5 {
     margin: 0 0 8px;
     color: var(--text-main);
@@ -210,10 +218,12 @@ h1 {
     font-size: 15px;
 }
 
+/*oculta iconos vacíos*/
 .js-icon[src=""],
 .js-icon:not([src]) {
     visibility: hidden;
 }
+
 
 .mobile-menu-button,
 .sidebar-close-button,
@@ -221,6 +231,7 @@ h1 {
     display: none;
 }
 
+/*Responsive*/
 @media (max-width: 760px) {
     body.menu-open {
         overflow: hidden;

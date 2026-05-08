@@ -1,8 +1,10 @@
+// Define la URL base del backend dependiendo si está en local o en producción
 const API_BASE_URL =
   window.location.port === "5500" || window.location.port === "5501"
     ? "http://localhost:3000"
     : "";
 
+// Configuración general del módulo de notificaciones
 const CONFIG = {
   iconBasePath: "./icons/",
 
@@ -19,16 +21,18 @@ const CONFIG = {
     save: "Guardar.png",
   },
 
+  // Clave para guardar la configuración en el navegador
   storageKey: "smartcontrol_notifications"
 };
 
+// Se ejecuta cuando carga toda la página
 document.addEventListener("DOMContentLoaded", () => {
   applyIcons();
   setupLogout();
   setupMobileMenu();
-  setupNotificationsForm();
-  setupChannelFields();
-  loadSavedConfig();
+  setupNotificationsForm(); // Formulario de notificaciones
+  setupChannelFields(); // Mostrar/ocultar campos
+  loadSavedConfig(); // Cargar configuración guardada
 });
 
 /* ICONOS */
@@ -46,6 +50,7 @@ function applyIcons() {
 }
 
 /* FORM */
+// Maneja el envío del formulario de notificaciones
 function setupNotificationsForm() {
   const form = document.getElementById("notifications-form");
   const message = document.getElementById("form-message");
@@ -56,7 +61,7 @@ function setupNotificationsForm() {
     e.preventDefault();
 
     const button = form.querySelector(".save-button");
-    const config = getFormData();
+    const config = getFormData(); // Obtiene datos del formulario
 
     if (!isValidConfig(config)) {
       showMessage(message, "Activa al menos un canal y completa su dato.", true);
@@ -67,6 +72,7 @@ function setupNotificationsForm() {
     showMessage(message, "Guardando configuración...", false);
 
     try {
+      // Guarda configuración en localStorage
       localStorage.setItem(CONFIG.storageKey, JSON.stringify(config));
       showSuccessModal();
       showMessage(message, "Configuración guardada correctamente.", false);
@@ -79,6 +85,7 @@ function setupNotificationsForm() {
 }
 
 /* MOSTRAR / OCULTAR CAMPOS */
+// Activa o desactiva los campos según checkbox
 function setupChannelFields() {
   const emailCheckbox = document.getElementById("email");
   const smsCheckbox = document.getElementById("sms");
@@ -89,6 +96,7 @@ function setupChannelFields() {
   updateChannelFields();
 }
 
+// Muestra u oculta inputs según selección
 function updateChannelFields() {
   const emailChecked = document.getElementById("email")?.checked;
   const smsChecked = document.getElementById("sms")?.checked;
@@ -119,6 +127,7 @@ function getFormData() {
 }
 
 /* VALIDACION */
+// Valida que haya al menos un canal activo y con datos
 function isValidConfig(config) {
   if (!config.email && !config.sms) {
     return false;
@@ -136,6 +145,7 @@ function isValidConfig(config) {
 }
 
 /* CARGAR CONFIG GUARDADA */
+// Carga la configuración guardada en el navegador
 function loadSavedConfig() {
   const saved = localStorage.getItem(CONFIG.storageKey);
   if (!saved) {
@@ -146,6 +156,7 @@ function loadSavedConfig() {
   try {
     const config = JSON.parse(saved);
 
+    // Rellena el formulario con datos guardados
     document.getElementById("email").checked = config.email || false;
     document.getElementById("sms").checked = config.sms || false;
     document.getElementById("out-stock").checked = config.outStock || false;
