@@ -225,3 +225,35 @@ async function verificarUsuario() {
 window.addEventListener("load", () => {
     verificarUsuario();
 });
+
+document.getElementById("btnGoogleLogin").addEventListener("click", async () => {
+    try {
+        const result = await firebaseAuth.signInWithPopup(googleProvider);
+        const idToken = await result.user.getIdToken();
+
+        const res = await fetch(`${API_URL}/auth/google`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ idToken })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            alert(data.message || "No se pudo iniciar sesión con Google");
+            await firebaseAuth.signOut();
+            return;
+        }
+
+        localStorage.setItem("smartcontrol_user", JSON.stringify(data.user));
+        localStorage.setItem("smartcontrol_token", idToken);
+
+        window.location.href = "dashboard.html";
+
+    } catch (error) {
+        console.error("ERROR GOOGLE LOGIN:", error);
+        alert("Error al iniciar sesión con Google");
+    }
+});

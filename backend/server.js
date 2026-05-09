@@ -9,8 +9,18 @@ const mysql = require('mysql2');
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
+const admin = require('firebase-admin');
 
 const app = express();
+
+admin.initializeApp({
+    credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    }),
+});
+
 
 //Middlewares (facilitadores o puentes) básicos
 app.use(cors()); // Permite peticiones desde otros orígenes
@@ -117,6 +127,50 @@ app.post('/login', async (req, res) => {
         res.status(500).send(err.message);
     }
 });
+
+app.post('/auth/google', async (req, res) => {
+    try {
+        const { idToken } = req.body;
+
+        if (!idToken) {
+            return res.status(400).json({ message: 'Token requerido' });
+        }
+
+        const decodedToken = await admin.auth().verifyIdToken(idToken);
+
+        const email = decodedToken.email || '';
+        const emailVerified = decodedToken.email_verified;
+
+        if (!emailVerified) {
+            return res.status(401).json({
+                message: 'El correo de Google no está verificado',
+            });
+        }
+
+        if (email.toLowerCase() !== String(process.env.GOOGLE_ADMIN_EMAIL || '').toLowerCase()) {
+            return res.status(403).json({
+                message: 'Esta cuenta de Google no tiene acceso como administrador',
+            });
+        }
+
+        res.json({
+            message: 'Login con Google exitoso',
+            user: {
+                uid: decodedToken.uid,
+                email,
+                name: decodedToken.name || '',
+                picture: decodedToken.picture || '',
+                provider: 'google',
+                role: 'admin',
+            }
+        });
+
+    } catch (err) {
+        console.error('ERROR LOGIN GOOGLE:', err);
+        res.status(401).json({ message: 'Token de Google inválido o expirado' });
+    }
+});
+
 
 
 // OBTENER PREGUNTA DE SEGURIDAD

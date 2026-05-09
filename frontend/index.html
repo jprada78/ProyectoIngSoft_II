@@ -20,7 +20,7 @@
         <!-- ============================= -->
         <!-- CONTENEDOR PRINCIPAL APP -->
         <!-- ============================= -->
-         <!-- PANTALLA LOGIN INICIAL -->
+        <!-- PANTALLA LOGIN INICIAL -->
         <section id="login-inicial" class="screen active">
 
             <!-- LOGO PRINCIPAL -->
@@ -61,7 +61,8 @@
             <div class="divider">o</div>
 
             <!-- BOTON GOOGLE -->
-            <button class="btn-google btn-large google-flex">
+            <button id="btnGoogleLogin" type="button" class="btn-google btn-large google-flex">
+
                 <img src="icons/google.png" class="google-icon">
                 Iniciar sesión con Google
             </button>
@@ -182,9 +183,13 @@
     </main>
 
     <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="js/firebase-init.js" defer></script>
     <script src="js/navigation.js" defer></script>
     <script src="js/auth.js" defer></script>
     <script src="js/app.js" defer></script>
+
 
 </body>
 
