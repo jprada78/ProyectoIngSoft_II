@@ -13,13 +13,22 @@ const admin = require('firebase-admin');
 
 const app = express();
 
-admin.initializeApp({
-    credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-    }),
-});
+if (
+    process.env.FIREBASE_PROJECT_ID &&
+    process.env.FIREBASE_CLIENT_EMAIL &&
+    process.env.FIREBASE_PRIVATE_KEY
+) {
+    admin.initializeApp({
+        credential: admin.credential.cert({
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+            privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        }),
+    });
+} else {
+    console.warn("Firebase Admin no se inicializó porque faltan variables de entorno.");
+}
+
 
 
 //Middlewares (facilitadores o puentes) básicos
@@ -130,6 +139,13 @@ app.post('/login', async (req, res) => {
 
 app.post('/auth/google', async (req, res) => {
     try {
+
+        if (!admin.apps.length) {
+            return res.status(500).json({
+                message: 'Firebase Admin no está configurado en el servidor',
+            });
+        }
+
         const { idToken } = req.body;
 
         if (!idToken) {
@@ -632,7 +648,7 @@ app.post('/api/products', async (req, res) => {
                 message: 'Ya existe un producto con ese ID',
             });
         }
-    
+
         //Inserta producto en BD
         const createdAt = getBogotaDateTime();
 
